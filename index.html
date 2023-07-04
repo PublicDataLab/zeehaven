@@ -17,8 +17,9 @@
         let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-        const header = Object.keys(result[0]["data"])
+        const header = Object.keys(result[0])
         console.log(header);
+        console.log(result[0]);
 
         const lines = [];
         
