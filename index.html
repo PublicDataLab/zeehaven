@@ -21,7 +21,14 @@
 function output(text)
 {
   document.getElementById("output").textContent += text;
-  //dump(text);
+  reader = new FileReader();
+  reader.onload = function (event) {
+    console.log(event.target.result);
+    //holder.style.background = 'url(' + event.target.result + ') no-repeat center';
+
+  };
+  console.log(file);
+  reader.readAsDataURL(file);
 }
    </script>
 </head>
