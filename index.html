@@ -23,7 +23,7 @@
         const header = Object.keys(result[0])
         const csv = [
           header.join(','), // header row first
-          ...result.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+          ...result.map(function(row) { header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(',' ) } )
         ].join('\n')
         console.log(csv);
       };
