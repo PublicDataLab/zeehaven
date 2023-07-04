@@ -8,7 +8,6 @@
 {
   var dt = event.dataTransfer;
   var files = dt.files;
-  console.log(files);
   
     for (var i = 0; i < files.length; i++) {
       reader = new FileReader();
@@ -20,10 +19,16 @@
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
         const header = Object.keys(result[0])
 
-        const lines = result.map(function (row) { if(row) { 
-                                       header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
-        }
-                       } );
+        const lines = [];
+        
+        result.forEach(function (row) { 
+          const rows = []
+          if(row) { 
+            //header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
+            header.forEach(fieldname => rows.append( JSON.stringify(row[fieldName], replacer) ) )
+          }
+          lines.append(row.join(','))
+        } );
         const csv = [
           header.join(','), // header row first
           lines
