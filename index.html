@@ -31,7 +31,7 @@
           const body = {"id": row["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             //"timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "unix_timestamp": int(timestamp.timestamp()),
+            //"unix_timestamp": int(timestamp.timestamp()),
             "link": "https://twitter.com/{row['core']['user_results']['result']['legacy']['screen_name']}/status/{row['id']}",
             "body": row["data"]["legacy"]["full_text"],
             "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
