@@ -17,7 +17,7 @@
         let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-        #const header = Object.keys(result[0])
+        //const header = Object.keys(result[0])
         const header = {}
         console.log(header);
         console.log(result[0]);
@@ -27,7 +27,7 @@
         result.forEach(function (row) { 
           const rows = [];
           console.log(row["data"]["legacy"]["full_text"]);
-          
+          //https://github.com/digitalmethodsinitiative/4cat/blob/master/datasources/twitter-import/search_twitter.py
           const body = {"id": row["rest_id"],
             "thread_id": row["legacy"]["conversation_id_str"],
             "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
