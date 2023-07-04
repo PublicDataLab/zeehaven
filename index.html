@@ -8,10 +8,7 @@
 {
   var dt = event.dataTransfer;
   var files = dt.files;
-
-  var count = files.length;
-  output("File Count: " + count + "\n");
-
+  
     for (var i = 0; i < files.length; i++) {
       reader = new FileReader();
       reader.onload = function (event) {
