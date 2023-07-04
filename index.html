@@ -15,7 +15,7 @@
     for (var i = 0; i < files.length; i++) {
       reader = new FileReader();
       reader.onload = function (event) {
-        console.log(event.target.result);
+        console.log(JSON.parse(event.target.result));
         //holder.style.background = 'url(' + event.target.result + ') no-repeat center';
       };
       console.log(files[i]);
