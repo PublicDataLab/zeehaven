@@ -14,9 +14,21 @@
       reader = new FileReader();
       reader.onload = function (event) {
         
-        const input = event.target.result;
-        console.log(input);
-        let result = input.split('\n').map(s => JSON.parse(s));
+        //const input = event.target.result;
+        console.log(event.target.result);
+        /*let result = input.split('\n').map(s => JSON.parse(s));
+        console.log(result);
+        const items = result.items
+        const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+        const header = Object.keys(items[0])
+        const csv = [
+          header.join(','), // header row first
+          ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+        ].join('\n')
+        console.log(csv)*/
+      };
+      const input = reader.readAsText(files[i]);
+      let result = input.split('\n').map(s => JSON.parse(s));
         console.log(result);
         const items = result.items
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
@@ -26,8 +38,6 @@
           ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
         ].join('\n')
         console.log(csv)
-      };
-      reader.readAsText(files[i]);
       
     }
 }
