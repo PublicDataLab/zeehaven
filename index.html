@@ -25,7 +25,7 @@
           const rows = []
           if(row) { 
             //header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
-            header.forEach(fieldname => rows.append( JSON.stringify(row[fieldName], replacer) ) )
+            header.forEach(fieldName => rows.append( JSON.stringify(row[fieldName], replacer) ) )
           }
           lines.append(row.join(','))
         } );
