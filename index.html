@@ -17,14 +17,14 @@
         let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-        const header = Object.keys(result[0])
+        const header = Object.keys(result[0]["data"])
 
         const lines = [];
         
         result.forEach(function (row) { 
           const rows = []
-          if(row) { 
-            //header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
+          if(row["data"]) { 
+            //header.map(function(fieldName) { return JSON.stringify(row["data"][fieldName], replacer) }).join(',' ) 
             header.forEach(fieldName => rows.push( JSON.stringify(row[fieldName], replacer) ) )
           }
           lines.push(rows.join(','))
