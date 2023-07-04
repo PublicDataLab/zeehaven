@@ -60,7 +60,7 @@
             "videos": ",".join([media["media_url_https"] for media in row["legacy"]["entities"].get("media", []) if
                                 media["type"] == "video"]),
             "mentions": row["legacy"]["entities"]["user_mentions"].join(','),*/
-            "place_name": (row["legacy"]["place"])? row["legacy"]["place"]["full_name"] : else ""}
+            "place_name": (row["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
           
           lines.push(rows.join(','))
         } );
