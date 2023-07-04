@@ -19,20 +19,18 @@
         const input = event.target.result;
         let result = input.split('\n').map(s => JSON.parse(s));
         console.log(result);
-        //holder.style.background = 'url(' + event.target.result + ') no-repeat center';
-      };
-      console.log(files[i]);
-      JSON.parse(reader.readAsText(files[i]));
-      let result = input.split('\n').map(s => JSON.parse(s));
-      output(" File " + i + ":\n(" + (typeof files[i]) + ") : <" + files[i] + " > " +
-             files[i].name + " " + files[i].size + "\n");
-    }
-}
+        const items = result.items
+      const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+      const header = Object.keys(items[0])
+      const csv = [
+        header.join(','), // header row first
+        ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+      ].join('\n')
 
-function output(text)
-{
-  document.getElementById("output").textContent += text;
-  
+console.log(csv)
+      };
+      
+    }
 }
    </script>
 </head>
