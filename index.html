@@ -15,8 +15,8 @@
       reader.onload = function (event) {
         
         const input = event.target.result;
-        console.log(event.target.result);
-        let result = input.split('\n').map(s => JSON.parse(s));
+        console.log(input);
+        let result = input.split('\n').map(s => console.log(s); JSON.parse(s));
         console.log(result);
         const items = result.items
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
