@@ -19,7 +19,7 @@
         //holder.style.background = 'url(' + event.target.result + ') no-repeat center';
       };
       console.log(files[i]);
-      reader.readAsText(files[i]);
+      JSON.parse(reader.readAsText(files[i]));
       output(" File " + i + ":\n(" + (typeof files[i]) + ") : <" + files[i] + " > " +
              files[i].name + " " + files[i].size + "\n");
     }
