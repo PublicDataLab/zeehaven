@@ -34,7 +34,7 @@
           lines
           //...result.map(function(row) { header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(',' ) } )
         ].join('\n')
-        console.log(csv);
+        document.getElementById('csv').innerText = csv;
       };
       reader.readAsText(files[i]);
     }
@@ -50,7 +50,7 @@
      dodrop(event);">
      DROP FILES HERE FROM FINDER OR EXPLORER
 </div>
-
+<div id="csv"></div>
 
 
 </body>
