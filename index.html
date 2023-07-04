@@ -23,8 +23,8 @@
         const lines = [];
         
         result.forEach(function (row) { 
-          const rows = []
-          const jrow = JSON.parse(row);
+          const rows = [];
+          const jrow = JSON.parse(row["data"]);
           if(jrow ) { 
             //header.map(function(fieldName) { return JSON.stringify(jrow[fieldName], replacer) }).join(',' ) 
             header.forEach(fieldName => rows.push( JSON.stringify(jrow[fieldName], replacer) ) )
