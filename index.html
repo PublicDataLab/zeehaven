@@ -25,9 +25,9 @@
           const rows = []
           if(row) { 
             //header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
-            header.forEach(fieldName => rows.add( JSON.stringify(row[fieldName], replacer) ) )
+            header.forEach(fieldName => rows.push( JSON.stringify(row[fieldName], replacer) ) )
           }
-          lines.add(row.join(','))
+          lines.push(row.join(','))
         } );
         const csv = [
           header.join(','), // header row first
