@@ -3,6 +3,12 @@
   <head>
     <title>ndjson to CSV</title>
     <script>
+      function dragOverHandler(ev) {
+  console.log("File(s) in drop zone");
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+}
       function dropHandler(ev) {
   console.log("File(s) dropped");
 
