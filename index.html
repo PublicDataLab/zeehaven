@@ -20,8 +20,9 @@
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
         const header = Object.keys(result[0])
         const lines = []
-        result.forEach(function (row) { console.log(row); 
+        result.forEach(function (row) { if(row) { 
                                        header.map(function(fieldName) { return JSON.stringify(row[fieldName], replacer) }).join(',' ) 
+        }
                        } );
         const csv = [
           header.join(','), // header row first
