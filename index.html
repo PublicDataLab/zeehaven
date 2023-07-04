@@ -18,14 +18,16 @@
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
         const header = Object.keys(result[0]["data"])
+        console.log(header);
 
         const lines = [];
         
         result.forEach(function (row) { 
           const rows = []
-          if(row["data"]) { 
-            //header.map(function(fieldName) { return JSON.stringify(row["data"][fieldName], replacer) }).join(',' ) 
-            header.forEach(fieldName => rows.push( JSON.stringify(row[fieldName], replacer) ) )
+          const jrow = JSON.parse(row);
+          if(jrow ) { 
+            //header.map(function(fieldName) { return JSON.stringify(jrow[fieldName], replacer) }).join(',' ) 
+            header.forEach(fieldName => rows.push( JSON.stringify(jrow[fieldName], replacer) ) )
           }
           lines.push(rows.join(','))
         } );
