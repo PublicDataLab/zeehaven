@@ -25,6 +25,7 @@
         
         result.forEach(function (row) { 
           const rows = [];
+          console.log(row["data"]["legacy"]["full_text"]));
             //header.map(function(fieldName) { return JSON.stringify(jrow[fieldName], replacer) }).join(',' ) 
             header.forEach(fieldName => rows.push( JSON.stringify("body", row["data"]["legacy"]["full_text"]) ) )
           
