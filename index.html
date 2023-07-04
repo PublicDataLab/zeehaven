@@ -1,41 +1,41 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <meta charset="utf-8">
+  <title>Convert</title>
+   <script>
+      function dodrop(event)
+{
+  var dt = event.dataTransfer;
+  var files = dt.files;
+
+  var count = files.length;
+  output("File Count: " + count + "\n");
+
+    for (var i = 0; i < files.length; i++) {
+      output(" File " + i + ":\n(" + (typeof files[i]) + ") : <" + files[i] + " > " +
+             files[i].name + " " + files[i].size + "\n");
+    }
+}
+
+function output(text)
+{
+  document.getElementById("output").textContent += text;
+  //dump(text);
+}
+   </script>
+</head>
 <body>
-<div id="dropContainer" style="border:1px solid black;height:100px;">
-   Drop Here
+
+<div id="output" style="min-height: 200px; white-space: pre; border: 1px solid black;"
+     ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
+     ondragover="event.stopPropagation(); event.preventDefault();"
+     ondrop="event.stopPropagation(); event.preventDefault();
+     dodrop(event);">
+     DROP FILES HERE FROM FINDER OR EXPLORER
 </div>
-  Should update here:
-  <input type="file" id="fileInput" />
-  <script>
-    function dragOverHandler(ev) {
-  console.log("File(s) in drop zone");
 
-  // Prevent default behavior (Prevent file from being opened)
-  ev.preventDefault();
-}
 
-     function dropHandler(ev) {
-  console.log("File(s) dropped");
 
-  // Prevent default behavior (Prevent file from being opened)
-  ev.preventDefault();
-
-  if (ev.dataTransfer.items) {
-    // Use DataTransferItemList interface to access the file(s)
-    [...ev.dataTransfer.items].forEach((item, i) => {
-      // If dropped items aren't files, reject them
-      if (item.kind === "file") {
-        const file = item.getAsFile();
-        console.log(`… file[${i}].name = ${file.name}`);
-      }
-    });
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    [...ev.dataTransfer.files].forEach((file, i) => {
-      console.log(`… file[${i}].name = ${file.name}`);
-    });
-  }
-}
-  </script>
 </body>
 </html>
