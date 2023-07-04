@@ -16,7 +16,7 @@
         
         const input = event.target.result;
         console.log(input);
-        let result = input.split('\n').map(s => if (s) {console.log(s); });
+        let result = input.split('\n').map(function(s) { if (s) {JSON.parse(s); } });
         console.log(result);
         const items = result.items
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
