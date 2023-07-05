@@ -28,7 +28,7 @@
             
             result.forEach(function (row) { 
 
-                lines.push(JSON.stringify(Object.values(rows).join(',')))
+                lines.push(JSON.stringify(Object.values(row).join(',')))
 
                 const csv = [
                     header.join(','), // header row first
