@@ -76,7 +76,7 @@
     
           
           lines.push(Object.values(rows).join(','))
-          if (header.length == 0) {  console.log(Object.keys(rows)); header = Object.keys(rows);  console.log(header);}
+          if (header.length == 0) { header = Object.keys(rows);}
         } );
         
         const csv = [
@@ -119,7 +119,7 @@
      dodrop(event);">
      DROP FILES HERE FROM FINDER OR EXPLORER
 </div>
-<button onclick="downloadCSV(csv,'test.csv')">Export</button>
+<button onclick="downloadCSV('test.csv')">Export</button>
 <div id="csv"></div>
 
 
