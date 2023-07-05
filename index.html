@@ -75,9 +75,11 @@
     
           
           lines.push(Object.values(rows).join(','))
+          const header = Object.keys(rows);
+          console.log(header);
         } );
 
-        const header = Object.keys(lines[0]);
+        
         console.log(typeof(lines[0]));
         console.log(lines[0]);
         //const header = []
