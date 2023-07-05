@@ -30,7 +30,7 @@
           if (retweet) { 
             retweet["result"] = retweet["result"]["tweet"] 
             console.log(retweet);
-            const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] + \
+            const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] +
                      ": " + row["data"]["result"]["legacy"]["full_text"]
             row["legacy"]["full_text"] = rt_text
           }
