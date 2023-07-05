@@ -26,7 +26,9 @@
         
         result.forEach(function (row) { 
           const rows = [];
-          console.log(row["data"]["legacy"]["full_text"]);
+          const retweet = row["data"]["legacy"]["retweeted_status_result"]
+          console.log(retweet);
+          retweet["result"] = retweet["result"]["tweet"]
           //https://github.com/digitalmethodsinitiative/4cat/blob/master/datasources/twitter-import/search_twitter.py
           const body = {"id": row["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
