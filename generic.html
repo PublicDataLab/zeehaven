@@ -5,39 +5,39 @@
   <title>NDJson to CSV</title>
    <script>
     const lines = [];
-      function dodrop(event)
-{
-  var dt = event.dataTransfer;
-  var files = dt.files;
+    function dodrop(event) {
+        var dt = event.dataTransfer;
+        var files = dt.files;
   
-    for (var i = 0; i < files.length; i++) {
-      reader = new FileReader();
-      reader.onload = function (event) {
-        
-        const input = event.target.result;
-        let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
+        for (var i = 0; i < files.length; i++) {
+        reader = new FileReader();
+        reader.onload = function (event) {
+            
+            const input = event.target.result;
+            let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
-        const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+            const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-        const header = Object.keys(result[0]);
-        console.log(header);
+            const header = Object.keys(result[0]);
+            console.log(header);
 
-        //get rid of any empty last lines
-        if (result[result.length - 1] == undefined) {
-          result.pop();
+            //get rid of any empty last lines
+            if (result[result.length - 1] == undefined) {
+            result.pop();
+            }
+            
+            result.forEach(function (row) { 
+
+                lines.push(JSON.stringify(Object.values(rows).join(',')))
+
+                const csv = [
+                    header.join(','), // header row first
+                    lines.join('\n')
+                ].join('\n')
+                document.getElementById('csv').innerText = csv;
+            });
+            reader.readAsText(files[i]);
         }
-        
-        result.forEach(function (row) { 
-
-            lines.push(JSON.stringify(Object.values(rows).join(',')))
-
-            const csv = [
-                header.join(','), // header row first
-                lines.join('\n')
-            ].join('\n')
-            document.getElementById('csv').innerText = csv;
-        });
-        reader.readAsText(files[i]);
     }
 }
 
