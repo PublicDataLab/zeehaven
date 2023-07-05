@@ -49,7 +49,7 @@
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
-            "body": row["data"]["legacy"]["full_text"],
+            "body": row["data"]["legacy"]["full_text"].replace(/\"/g, "\"\""),
             "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
             "author_fullname": row["data"]["core"]["user_results"]["result"]["legacy"]["name"],
             "author_id": row["data"]["legacy"]["user_id_str"],
