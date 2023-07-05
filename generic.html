@@ -43,7 +43,7 @@
                 result.pop();
             }
             
-            result.forEach(function (rows) { 
+            //result.forEach(function (rows) { 
 
                 //const header = Object.keys(result[0]);
                 const row = {}
@@ -57,10 +57,10 @@
                 ].join('\n')*/
                 const csv = [
                     Object.keys(header).join(','), // header row first
-                    ...Object.values(row).map(r => Object.keys(header).map(fieldName => console.log(fieldName)).join(','))
+                    ...Object.values(result).map(r => Object.keys(header).map(fieldName => console.log(fieldName)).join(','))
                 ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
-            });
+           // });
         }
         reader.readAsText(files[i]);
     }
