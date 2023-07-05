@@ -57,7 +57,7 @@
                 ].join('\n')*/
                 const csv = [
                     Object.keys(header).join(','), // header row first
-                    Object.values(row).map(r => Object.keys(header).map(fieldName => console.log(r[fieldName])).join(','))
+                    ...Object.values(row).map(r => Object.keys(header).map(fieldName => console.log(fieldName)).join(','))
                 ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
             });
