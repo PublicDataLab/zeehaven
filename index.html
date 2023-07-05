@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Convert</title>
    <script>
+    const lines = [];
       function dodrop(event)
 {
   var dt = event.dataTransfer;
@@ -18,7 +19,7 @@
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-        const lines = [];
+        
 
         let header = [];
 
