@@ -44,6 +44,7 @@
           //https://github.com/digitalmethodsinitiative/4cat/blob/master/datasources/twitter-import/search_twitter.py
           const rows = {"id": row["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
+            "timestamp": timestamp.getFullYear() + "-" + timestamp.getMonth() + "-" + timestamp.getDate() + " " + timestamp.getHours() + " " + timestamp.getMinutes() + " " + timestamp.getSeconds(), 
             //"timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
