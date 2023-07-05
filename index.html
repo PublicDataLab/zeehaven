@@ -129,6 +129,24 @@
     document.body.appendChild(downloadLink);
     downloadLink.click();
 }
+
+	   function createNgrams (length) {
+		   const _data = document.getElementById('csv').innerText
+		   const dtum = _data.filter(d => d.body);
+	    var ngramsArray = [];
+	
+	    for (var i = 0; i < dtum.length - (length - 1); i++) {
+	        var subNgramsArray = [];
+	
+	        for (var j = 0; j < length; j++) {
+	            subNgramsArray.push(dtum[i + j])
+	        }
+	
+	        ngramsArray.push(subNgramsArray);
+	    }
+	console.log(ngramsArray);
+	    return ngramsArray;
+	}
    </script>
 </head>
 <body>
@@ -141,6 +159,7 @@
      Drop your Zeeschuimer Twitter file here. Use the export button to download to CSV.
 </div>
 <button onclick="downloadCSV('test.csv')">Export</button>
+	<button onclick="createNgrams(2)">Create Ngrams</button>
 <div id="csv"></div>
 
 
