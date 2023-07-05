@@ -43,13 +43,17 @@
           if (quote_tweet) {
             console.log(quote_tweet);
           }
-console.log(row["data"]["legacy"]["full_text"].replace(/\"/, "\"\"").replace(/\n/, "\\n").replace(/\s?(<br\s?\/?>)\s?/g, " ").toString());
+
+		function escapeHTML(str){
+                  return new Option(str).innerHTML;
+                }
+         console.log(escapeHTML(row["data"]["legacy"]["full_text"]));
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
-            "body": row["data"]["legacy"]["full_text"].replace(/\"/, "\"\"").replace(/[\r\n]/, " ").replace(/\s?(<br\s?\/?>)\s?/g, " "),
+            "body": escapeHTML(row["data"]["legacy"]["full_text"]),
             "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
             "author_fullname": row["data"]["core"]["user_results"]["result"]["legacy"]["name"],
             "author_id": row["data"]["legacy"]["user_id_str"],
