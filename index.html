@@ -93,6 +93,24 @@
       reader.readAsText(files[i]);
     }
 }
+
+  function downloadCSV(csv, filename) {
+    var csvFile;
+    var downloadLink;
+
+	if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
+		alert("Your browser doesn't support Blobs");
+		return;
+	}
+	
+    csvFile = new Blob([csv], {type:"text/csv"});
+    downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
    </script>
 </head>
 <body>
@@ -104,6 +122,7 @@
      dodrop(event);">
      DROP FILES HERE FROM FINDER OR EXPLORER
 </div>
+<button onclick="downloadCSV(csv,'test.csv')">Export</button>
 <div id="csv"></div>
 
 
