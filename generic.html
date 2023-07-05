@@ -5,6 +5,37 @@
   <title>NDJson to CSV</title>
    <script>
     const lines = [];
+    function getOnlyObjects(data) {
+        var result = [];
+
+        if (Array.isArray(data)) {
+            data.forEach(function(item) {
+            result = result.concat(
+                getOnlyObjects(item)
+            );  
+            });
+        }
+        else {
+            Object.keys(data).forEach(function(key) {
+            if (Array.isArray(data[key])) {
+                result = result.concat(
+                getOnlyObjects(data[key])
+                );
+            }
+            else {
+                result = result.concat(data);
+            }
+            });
+        }
+
+        return result;
+        }
+
+function getData(data) {
+  return getOnlyObjects(data).map(function(item) {
+    return Object.keys(item)[0];
+  });
+
     function dodrop(event) {
         var dt = event.dataTransfer;
         var files = dt.files;
@@ -18,7 +49,8 @@
 
             const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-            const header = Object.keys(result[0]);
+            //const header = Object.keys(result[0]);
+            const header = getData(result[0])
             console.log(header);
 
             //get rid of any empty last lines
