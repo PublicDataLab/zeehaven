@@ -81,7 +81,7 @@
         
         const csv = [
           header.join(','), // header row first
-          lines
+          lines.join('\n')
         ].join('\n')
         document.getElementById('csv').innerText = csv;
       };
