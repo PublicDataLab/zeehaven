@@ -50,7 +50,7 @@
                 flatten(rows, row)
                 
 
-                lines = Object.keys(header).forEach(function(h) { return row[h] } )
+                Object.keys(header).forEach(function(h) { lines.push(row[h]) } )
                 console.log(lines);
                 const csv = [
                     Object.keys(header).join(','), // header row first
