@@ -133,7 +133,7 @@
 	   function createNgrams (length) {
 		  const _data = document.getElementById('csv').innerText.split('\n');
       _data.shift()
-		  const dtum = _data.filter(d => d.body);
+		  const dtum = _data.filter(d => console.log(d));
       console.log(dtum.length);
       console.log(dtum);
       const words = [].concat.apply([], dtum).split(" ");
