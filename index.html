@@ -91,7 +91,7 @@
             "urls": (row["data"]["legacy"]["entities"]["urls"]["expanded_url"]) ? row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';').toString():"",
             "images": (photos.length > 0) ? photos.join(";") : "",
             "videos": (videos.length > 0) ? videos.join(";") : "",
-            "mentions": mentions,
+            "mentions": (mentions.length > 0) ? mentions.join(";") : "",
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
 		
     
