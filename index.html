@@ -19,8 +19,6 @@
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
         //const header = Object.keys(result[0])
         const header = {}
-        console.log(header);
-        console.log(result[0]);
 
         const lines = [];
         
@@ -58,8 +56,8 @@
             "like_count": row["data"]["legacy"]["favorite_count"],
             "quote_count": row["data"]["legacy"]["quote_count"],
             "impression_count": row["data"]["views"]["count"],
-            //"is_retweet": (retweet)? "yes": "no",
-            //"retweeted_user": (retweet) ? row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
+            "is_retweet": (retweet)? "yes": "no",
+            "retweeted_user": (retweet) ? row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             /*"is_quote_tweet": (quote_tweet)? "yes": "no",
             "quoted_user": quote_tweet["result"]["core"]["user_results"]["result"]["legacy"][
                 "screen_name"] if quote_tweet else "",
@@ -72,7 +70,7 @@
             "videos": ",".join([media["media_url_https"] for media in row["legacy"]["entities"].get("media", []) if
                                 media["type"] == "video"]),
             "mentions": row["legacy"]["entities"]["user_mentions"].join(','),*/
-            "place_name": (row["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
+            "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
           
           lines.push(rows.join(','))
         } );
