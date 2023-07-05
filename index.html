@@ -20,6 +20,8 @@
 
         const lines = [];
 
+        const header = [];
+
         if (result[result.length - 1] == undefined) {
           result.pop();
         }
@@ -75,19 +77,17 @@
     
           
           lines.push(Object.values(rows).join(','))
-          const header = Object.keys(rows);
+          header = Object.keys(rows);
           console.log(header);
         } );
 
         
         console.log(typeof(lines[0]));
         console.log(lines[0]);
-        //const header = []
         
         const csv = [
           header.join(','), // header row first
           lines
-          //...result.map(function(row) { header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(',' ) } )
         ].join('\n')
         document.getElementById('csv').innerText = csv;
       };
