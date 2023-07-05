@@ -74,7 +74,7 @@
             "mentions": row["legacy"]["entities"]["user_mentions"].join(','),*/
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
           
-          lines.push(rows.join(','))
+          lines.push(Object.values(rows).join(','))
         } );
 
         const header = Object.keys(lines[0])
