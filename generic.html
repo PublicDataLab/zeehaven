@@ -20,11 +20,13 @@
         var dt = event.dataTransfer;
         var files = dt.files;
   
+        let lines = [];
+        
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
         reader.onload = function (event) {
 
-            let lines = [];
+            
             
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
