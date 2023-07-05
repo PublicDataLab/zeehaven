@@ -43,7 +43,7 @@
           if (quote_tweet) {
             console.log(quote_tweet);
           }
-console.log(row["data"]["legacy"]["full_text"]);
+console.log(row["data"]["legacy"]["full_text"].replace(/\"/, "\"\"").replace(/\n/, "\\n").replace(/\s?(<br\s?\/?>)\s?/g, " "));
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
