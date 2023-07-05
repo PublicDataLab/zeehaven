@@ -24,7 +24,7 @@
         reader = new FileReader();
         reader.onload = function (event) {
 
-            const lines = [];
+            let lines = [];
             
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
