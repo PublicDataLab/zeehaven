@@ -132,6 +132,7 @@
 }
 
 	   function createNgrams (length) {
+      console.log(lines);
 		  const _data = document.getElementById('csv').innerText.replace("\\n\\n", " ").split('\n');
       _data.shift()
 		  const dtum = _data.filter(function (d) {
