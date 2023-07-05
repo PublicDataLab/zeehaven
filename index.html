@@ -47,7 +47,22 @@
 		function escapeHTML(str){
                   return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
                 }
-         console.log(escapeHTML(row["data"]["legacy"]["full_text"]));
+          const mentions = [];
+	  if (row["data"]["legacy"]["entities"]["user_mentions"]) {
+		  row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions += m["screen_name"])
+	  }
+		const videos = [];
+		const photos = [];
+		if (row["data"]["legacy"]["entities"]["media"]) {
+			row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
+			   if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
+				if (img["type"] == "video") { videos.push(img["media_url_https"]) }
+			});
+		}
+		const tags = []
+		if (row["data"]["legacy"]["entities"]["hashtags"]) {
+			row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
+		}
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
@@ -72,11 +87,11 @@
             "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
             "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
-            "hashtags": (row["data"]["legacy"]["entities"]["hashtags"]["text"]) ? row["data"]["legacy"]["entities"]["hashtags"]["text"].join(';').toString(): "",
+            "hashtags": (tags.length > 0) ? tags.join(";") : "",
             "urls": (row["data"]["legacy"]["entities"]["urls"]["expanded_url"]) ? row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';').toString():"",
-            "images": (row["data"]["legacy"]["entities"]["media"]) ? row["data"]["legacy"]["entities"]["media"].filter( function(media) { console.log(media);if (media["type"] == "photo") return media["media_url_https"].toString()}).join(";") : "",
-            "videos": (row["data"]["legacy"]["entities"]["media"]) ? row["data"]["legacy"]["entities"]["media"].filter( function(media) { console.log(media); if (media["type"] == "video") return media["media_url_https"].toString()}).join(";") : "",
-            "mentions": (row["data"]["legacy"]["entities"]["user_mentions"]) ? row["data"]["legacy"]["entities"]["user_mentions"].join(';'): "",
+            "images": (photos.length > 0) ? photos.join(";") : "",
+            "videos": (videos.length > 0) ? videos.join(";") : "",
+            "mentions": mentions,
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
 		
     
