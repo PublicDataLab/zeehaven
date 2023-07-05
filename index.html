@@ -65,7 +65,7 @@
             "is_quote_tweet": (quote_tweet)? "yes": "no",
             "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
-            "replied_user": row["data"]["legacy"].get("in_reply_to_screen_name", ""),
+            "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
             "hashtags": row["data"]["legacy"]["entities"]["hashtags"]["text"].join(';'),
             "urls": row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';'),
             "images": row["data"]["legacy"]["entities"]["media"].filter( function(media) { if (media["type"] == "photo") return media["media_url_https"]}).join(";"),
