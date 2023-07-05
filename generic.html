@@ -46,7 +46,7 @@
                 flatten(rows, row)
                 console.log(row);
 
-                lines = header.forEach(h => JSON.stringify(row[h], replacer) )
+                lines = Object.keys(header).forEach(h => JSON.stringify(row[h], replacer) )
 
                 const csv = [
                     header.join(','), // header row first
