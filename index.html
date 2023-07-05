@@ -139,8 +139,8 @@
         }, []);
 }
 
-		  const words = []
-      lines.forEach(function(l) { words.push(l.split(',')[5].split(' ') ) } );
+		  let words = []
+      lines.forEach(function(l) { words.concat(l.split(',')[5].split(' ').toString() ) } );
       console.log(words);
 	    var ngramsArray = [];
 	
