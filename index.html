@@ -47,19 +47,19 @@
 		function escapeHTML(str){
                   return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
                 }
-          const mentions = [];
+          let mentions = [];
 	  if (row["data"]["legacy"]["entities"]["user_mentions"]) {
-		  row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions += m["screen_name"])
+		  row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
 	  }
-		const videos = [];
-		const photos = [];
+		let videos = [];
+		let photos = [];
 		if (row["data"]["legacy"]["entities"]["media"]) {
 			row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
 			   if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
 				if (img["type"] == "video") { videos.push(img["media_url_https"]) }
 			});
 		}
-		const tags = []
+		let tags = []
 		if (row["data"]["legacy"]["entities"]["hashtags"]) {
 			row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
 		}
