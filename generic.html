@@ -46,10 +46,10 @@
                 //const header = Object.keys(result[0]);
                 const row = {}
                 flatten(rows, row)
-                console.log(row);
+                
 
-                lines = Object.keys(header).forEach(h => JSON.stringify(row[h], replacer) )
-
+                lines = Object.keys(header).forEach(function(h) { return JSON.stringify(row[h], replacer) } )
+                console.log(lines);
                 const csv = [
                     Object.keys(header).join(','), // header row first
                     lines.join('\n')
