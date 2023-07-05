@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>NDJson to CSV</title>
+   <script>
+    const lines = [];
+      function dodrop(event)
+{
+  var dt = event.dataTransfer;
+  var files = dt.files;
+  
+    for (var i = 0; i < files.length; i++) {
+      reader = new FileReader();
+      reader.onload = function (event) {
+        
+        const input = event.target.result;
+        let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
+
+        const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+
+        
+
+        const header = Object.keys(result[0]);
+
+        //get rid of any empty last lines
+        if (result[result.length - 1] == undefined) {
+          result.pop();
+        }
+        
+        result.forEach(function (row) { 
+
+            lines.push(JSON.stringify(Object.values(rows).join(',')))
+
+            const csv = [
+                header.join(','), // header row first
+                lines.join('\n')
+            ].join('\n')
+            document.getElementById('csv').innerText = csv;
+        });
+        reader.readAsText(files[i]);
+    }
+}
+
+  function downloadCSV(filename) {
+
+	  const datum = document.getElementById('csv').innerText
+    var csvFile;
+    var downloadLink;
+
+	if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
+		alert("Your browser doesn't support Blobs");
+		return;
+	}
+	
+    csvFile = new Blob([datum], {type:"text/csv"});
+    downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+}
+
+   </script>
+</head>
+<body>
+
+<div id="output" style="min-height: 200px; white-space: pre; border: 1px solid black;"
+     ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
+     ondragover="event.stopPropagation(); event.preventDefault();"
+     ondrop="event.stopPropagation(); event.preventDefault();
+     dodrop(event);">
+     Drop your NDJson file here. Use the export button to download to CSV.
+</div>
+<button onclick="downloadCSV('test.csv')">Export</button>
+<div id="csv"></div>
+
+
+</body>
+</html>
