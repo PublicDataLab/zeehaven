@@ -51,7 +51,7 @@
                 lines = Object.keys(header).forEach(h => JSON.stringify(row[h], replacer) )
 
                 const csv = [
-                    header.join(','), // header row first
+                    Object.keys(header).join(','), // header row first
                     lines.join('\n')
                 ].join('\n')
                 document.getElementById('csv').innerText = csv;
