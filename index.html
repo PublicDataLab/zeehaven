@@ -132,9 +132,8 @@
 }
 
 	   function createNgrams (length) {
-  
-		  const words = lines.forEach(l => l.split(',')[5].split(' '));
 
+		  const words = lines.forEach(function(l) { return l.split(',')[5].split(' ') } );
       console.log(words);
 
 	    var ngramsArray = [];
