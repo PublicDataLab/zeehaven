@@ -131,12 +131,14 @@
 }
 
 	   function createNgrams (length) {
-		   const _data = document.getElementById('csv').innerText.split('\n')
-		   console.log(_data);
-		   const dtum = _data.shift().filter(d => d.body);
+		  const _data = document.getElementById('csv').innerText.split('\n')
+		  const dtum = _data.shift().filter(d => d.body);
+      console.log(dtum.length);
+      console.log(dtum);
+      const words = [].concat.apply([], dtum).split(" ");
 	    var ngramsArray = [];
 	
-	    for (var i = 0; i < dtum.length - (length - 1); i++) {
+	    for (var i = 0; i < words.length - (length - 1); i++) {
 	        var subNgramsArray = [];
 	
 	        for (var j = 0; j < length; j++) {
@@ -145,7 +147,7 @@
 	
 	        ngramsArray.push(subNgramsArray);
 	    }
-	console.log(ngramsArray);
+	    console.log(ngramsArray);
 	    return ngramsArray;
 	}
    </script>
