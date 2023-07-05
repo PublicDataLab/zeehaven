@@ -14,7 +14,7 @@
       reader.onload = function (event) {
         
         const input = event.target.result;
-        let result = input.split('\n').map(function(s) { if (s != "") { return JSON.parse(s); } });
+        let result = input.split('\n').map(function(s) { if (s != "" || s != undefined) { return JSON.parse(s); } });
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
         //const header = Object.keys(result[0])
