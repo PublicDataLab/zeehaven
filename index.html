@@ -64,7 +64,7 @@
             "retweeted_user": (retweet) ? row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_quote_tweet": (quote_tweet)? "yes": "no",
             "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
-            "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["rest_id"].toString()) ? "yes" : "no",
+            "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
             "replied_user": tweet["legacy"].get("in_reply_to_screen_name", ""),
             "hashtags": row["legacy"]["entities"]["hashtags"]["text"].join(';'),
             "urls": row["legacy"]["entities"]["urls"]["expanded_url"].join(';'),
