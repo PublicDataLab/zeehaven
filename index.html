@@ -25,7 +25,7 @@
         }
         
         result.forEach(function (row) { 
-          const rows = [];
+          //const rows = [];
           const retweet = row["data"]["legacy"]["retweeted"]
           if (retweet) { 
             retweet["result"] = retweet["result"]["tweet"] 
@@ -41,7 +41,7 @@
           }
           
           //https://github.com/digitalmethodsinitiative/4cat/blob/master/datasources/twitter-import/search_twitter.py
-          const body = {"id": row["rest_id"],
+          const rows = {"id": row["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             //"timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
             //"unix_timestamp": int(timestamp.timestamp()),
