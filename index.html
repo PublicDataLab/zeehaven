@@ -25,6 +25,7 @@
         }
         
         result.forEach(function (row) { 
+          const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           //const rows = [];
           const retweet = row["data"]["legacy"]["retweeted"]
           if (retweet) { 
@@ -44,7 +45,7 @@
           const rows = {"id": row["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             //"timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "unix_timestamp": row["data"]["legacy"]["created_at"],
+            "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
             "body": row["data"]["legacy"]["full_text"],
             "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
