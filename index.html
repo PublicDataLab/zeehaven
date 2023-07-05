@@ -140,9 +140,7 @@
 }
 
 		  const words = []
-      const _l = flatten(lines);
-      console.log(_l);
-      _l.forEach(function(l) { words.concat(l.split(',')[5].split(' ') ) } );
+      lines.forEach(function(l) { words.concat(l.split(',')[5].split(' ') ) } );
       console.log(words);
 	    var ngramsArray = [];
 	
