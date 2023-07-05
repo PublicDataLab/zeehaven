@@ -133,9 +133,15 @@
 
 	   function createNgrams (length) {
 
+      function flatten(arr) {
+        return arr.reduce(function (flat, toFlatten) {
+          return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+        }, []);
+}
+
 		  const words = []
-      const _l = [].concat.apply([], lines);
-      _l.forEach(function(l) { words.push(l.split(',')[5].split(' ') ) } );
+      const _l = flatten(lines);
+      _l.forEach(function(l) { word.push(l.split(',')[5].split(' ') ) } );
       console.log(words);
 	    var ngramsArray = [];
 	
