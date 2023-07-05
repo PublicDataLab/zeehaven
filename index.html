@@ -45,7 +45,7 @@
           }
 
 		function escapeHTML(str){
-                  return new Option(str).innerHTML;
+                  return new Option(str).innerHTML.replace(/\n/g,'\\n');
                 }
          console.log(escapeHTML(row["data"]["legacy"]["full_text"]));
           const rows = {"id": row["data"]["rest_id"],
