@@ -20,7 +20,7 @@
         var dt = event.dataTransfer;
         var files = dt.files;
   
-        let lines = [];
+        
 
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
@@ -50,12 +50,15 @@
                 flatten(rows, row)
                 
 
-                Object.keys(header).forEach(function(h) { lines.push(row[h]) } )
-                console.log(lines);
-                const csv = [
+                //Object.keys(header).forEach(function(h) { lines.push(row[h]) } )
+                /*const csv = [
                     Object.keys(header).join(','), // header row first
-                    lines.join('\n')
-                ].join('\n')
+                    Object.values(row).join('\n')
+                ].join('\n')*/
+                const csv = [
+                    header.join(','), // header row first
+                    ...row.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
             });
         }
