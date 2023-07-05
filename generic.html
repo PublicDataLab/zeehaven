@@ -21,7 +21,7 @@
         var files = dt.files;
   
         let lines = [];
-        
+
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
         reader.onload = function (event) {
@@ -50,7 +50,7 @@
                 flatten(rows, row)
                 
 
-                lines = Object.keys(header).forEach(function(h) { return JSON.stringify(row[h], replacer) } )
+                lines = Object.keys(header).forEach(function(h) { return row[h] } )
                 console.log(lines);
                 const csv = [
                     Object.keys(header).join(','), // header row first
