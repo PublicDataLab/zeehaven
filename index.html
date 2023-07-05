@@ -131,7 +131,8 @@
 }
 
 	   function createNgrams (length) {
-		   const _data = document.getElementById('csv').innerText
+		   const _data = document.getElementById('csv').innerText.split('\n')
+		   console.log(_data);
 		   const dtum = _data.filter(d => d.body);
 	    var ngramsArray = [];
 	
