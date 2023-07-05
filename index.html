@@ -44,25 +44,25 @@
             console.log(quote_tweet);
           }
 
-		function escapeHTML(str){
-                  return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
-                }
+		      function escapeHTML(str){
+            return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
+          }
           let mentions = [];
-	  if (row["data"]["legacy"]["entities"]["user_mentions"]) {
-		  row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
-	  }
-		let videos = [];
-		let photos = [];
-		if (row["data"]["legacy"]["entities"]["media"]) {
-			row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
-			   if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
-				if (img["type"] == "video") { videos.push(img["media_url_https"]) }
-			});
-		}
-		let tags = []
-		if (row["data"]["legacy"]["entities"]["hashtags"]) {
-			row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
-		}
+	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
+		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
+	        }
+		      let videos = [];
+		      let photos = [];
+		      if (row["data"]["legacy"]["entities"]["media"]) {
+			      row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
+			        if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
+				      if (img["type"] == "video") { videos.push(img["media_url_https"]) }
+			      });
+		      }
+          let tags = []
+          if (row["data"]["legacy"]["entities"]["hashtags"]) {
+            row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
+          }
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
@@ -133,7 +133,7 @@
 	   function createNgrams (length) {
 		   const _data = document.getElementById('csv').innerText.split('\n')
 		   console.log(_data);
-		   const dtum = _data.filter(d => d.body);
+		   const dtum = _data.shift().filter(d => d.body);
 	    var ngramsArray = [];
 	
 	    for (var i = 0; i < dtum.length - (length - 1); i++) {
