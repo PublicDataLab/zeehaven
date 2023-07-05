@@ -76,7 +76,7 @@
             "urls": (row["data"]["legacy"]["entities"]["urls"]["expanded_url"]) ? row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';').toString():"",
             "images": (row["data"]["legacy"]["entities"]["media"]) ? row["data"]["legacy"]["entities"]["media"].filter( function(media) { console.log(media);if (media["type"] == "photo") return media["media_url_https"]}).join(";").toString() : "",
             "videos": (row["data"]["legacy"]["entities"]["media"]) ? row["data"]["legacy"]["entities"]["media"].filter( function(media) { console.log(media); if (media["type"] == "video") return media["media_url_https"]}).join(";").toString() : "",
-            "mentions": (row["data"]["legacy"]["entities"]["user_mentions"]) ? row["data"]["legacy"]["entities"]["user_mentions"]["screen_name"].join(';'): "",
+            "mentions": (row["data"]["legacy"]["entities"]["user_mentions"]) ? row["data"]["legacy"]["entities"]["user_mentions"].join(';'): "",
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
 		
     
