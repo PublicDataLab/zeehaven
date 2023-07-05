@@ -77,8 +77,7 @@
     
           
           lines.push(Object.values(rows).join(','))
-          if (header == []) {  header = Object.keys(rows);  console.log(Object.keys(rows));}
-          console.log(header);
+          if (header.length == 0) {  console.log(Object.keys(rows)); header = Object.keys(rows);  console.log(header);}
         } );
 
         
