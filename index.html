@@ -43,8 +43,7 @@
           if (quote_tweet) {
             console.log(quote_tweet);
           }
-          
-          //https://github.com/digitalmethodsinitiative/4cat/blob/master/datasources/twitter-import/search_twitter.py
+
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
@@ -79,10 +78,6 @@
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) {  console.log(Object.keys(rows)); header = Object.keys(rows);  console.log(header);}
         } );
-
-        
-        console.log(typeof(lines[0]));
-        console.log(lines[0]);
         
         const csv = [
           header.join(','), // header row first
@@ -94,7 +89,9 @@
     }
 }
 
-  function downloadCSV(csv, filename) {
+  function downloadCSV(filename) {
+
+	  const datum = document.getElementById('csv').innerText
     var csvFile;
     var downloadLink;
 
@@ -103,7 +100,7 @@
 		return;
 	}
 	
-    csvFile = new Blob([csv], {type:"text/csv"});
+    csvFile = new Blob([datum], {type:"text/csv"});
     downloadLink = document.createElement("a");
     downloadLink.download = filename;
     downloadLink.href = window.URL.createObjectURL(csvFile);
