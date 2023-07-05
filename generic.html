@@ -20,6 +20,7 @@
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
         const header = Object.keys(result[0]);
+        console.log(header);
 
         //get rid of any empty last lines
         if (result[result.length - 1] == undefined) {
