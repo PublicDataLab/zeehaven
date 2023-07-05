@@ -56,8 +56,8 @@
                     Object.values(row).join('\n')
                 ].join('\n')*/
                 const csv = [
-                    header.join(','), // header row first
-                    ...row.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
+                    Object.keys(header).join(','), // header row first
+                    ...Object.values(row).map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
                 ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
             });
