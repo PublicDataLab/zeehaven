@@ -68,8 +68,8 @@
             "replied_user": tweet["legacy"].get("in_reply_to_screen_name", ""),
             "hashtags": row["legacy"]["entities"]["hashtags"]["text"].join(';'),
             "urls": row["legacy"]["entities"]["urls"]["expanded_url"].join(';'),
-            "images": row["legacy"]["entities"]["media"].filter( function(media) { if (media["type"] == "photo") return media["media_url_https"]).join(";"),
-            "videos": row["legacy"]["entities"]["media"].filter( function(media) { if (media["type"] == "video") return media["media_url_https"]).join(";"),
+            "images": row["legacy"]["entities"]["media"].filter( function(media) { if (media["type"] == "photo") return media["media_url_https"]}).join(";"),
+            "videos": row["legacy"]["entities"]["media"].filter( function(media) { if (media["type"] == "video") return media["media_url_https"]}).join(";"),
             "mentions": row["legacy"]["entities"]["user_mentions"].join(';'),
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
     
