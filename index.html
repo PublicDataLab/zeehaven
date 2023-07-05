@@ -17,8 +17,6 @@
         let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
         const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-        //const header = Object.keys(result[0])
-        const header = {}
 
         const lines = [];
 
@@ -78,6 +76,10 @@
           
           lines.push(rows.join(','))
         } );
+
+        const header = Object.keys(lines[0])
+        //const header = []
+        
         const csv = [
           header.join(','), // header row first
           lines
