@@ -30,17 +30,25 @@
             const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
             //const header = Object.keys(result[0]);
-            const header = flatten(result[0], {})
+            const header = {}
+            flatten(result[0], header)
             console.log(header);
 
             //get rid of any empty last lines
             if (result[result.length - 1] == undefined) {
-            result.pop();
+                result.pop();
             }
             
-            result.forEach(function (row) { 
+            result.forEach(function (rows) { 
 
-                lines.push(JSON.stringify(Object.values(row).join(',')))
+                //const header = Object.keys(result[0]);
+                const row = {}
+                flatten(rows, row)
+                console.log(row);
+
+                lines = header.map(function(h) {
+                    JSON.stringify(row[h], replacer)
+                })
 
                 const csv = [
                     header.join(','), // header row first
