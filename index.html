@@ -2,112 +2,56 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Convert</title>
+  <title>NDJson to CSV</title>
    <script>
-    const lines = [];
-      function dodrop(event)
-{
-  var dt = event.dataTransfer;
-  var files = dt.files;
-  
-    for (var i = 0; i < files.length; i++) {
-      reader = new FileReader();
-      reader.onload = function (event) {
-        
-        const input = event.target.result;
-        let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
-
-        const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-
-        
-
-        let header = [];
-
-        if (result[result.length - 1] == undefined) {
-          result.pop();
-        }
-        
-        result.forEach(function (row) { 
-          const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
-          //const rows = [];
-          const dt = new Date(row["data"]["legacy"]["created_at"]);
-          const retweet = row["data"]["legacy"]["retweeted"]
-          if (retweet) { 
-            retweet["result"] = retweet["result"]["tweet"] 
-            console.log(retweet);
-            const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] +
-                     ": " + row["data"]["result"]["legacy"]["full_text"]
-            row["legacy"]["full_text"] = rt_text
-          }
-
-          const quote_tweet = row['data']["is_quote_status"];
-          if (quote_tweet) {
-            console.log(quote_tweet);
-          }
-
-		      function escapeHTML(str){
-            return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
-          }
-          let mentions = [];
-	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
-		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
-	        }
-		      let videos = [];
-		      let photos = [];
-		      if (row["data"]["legacy"]["entities"]["media"]) {
-			      row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
-			        if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
-				      if (img["type"] == "video") { videos.push(img["media_url_https"]) }
-			      });
-		      }
-          let tags = []
-          if (row["data"]["legacy"]["entities"]["hashtags"]) {
-            row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
-          }
-          const rows = {"id": row["data"]["rest_id"],
-            "thread_id": row["data"]["legacy"]["conversation_id_str"],
-            "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
-            "unix_timestamp": timestamp,
-            "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
-	    "body": `\"${row["data"]["legacy"]["full_text"]}\"`,
-            //"body": escapeHTML(row["data"]["legacy"]["full_text"]),
-            "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
-            "author_fullname": row["data"]["core"]["user_results"]["result"]["legacy"]["name"],
-            "author_id": row["data"]["legacy"]["user_id_str"],
-            "source": row["source"],
-            "language_guess": row["data"]["legacy"]["lang"],
-            "possibly_sensitive": (row["data"]["possibly_sensitive"])? "yes" : "no",
-            "retweet_count": row["data"]["legacy"]["retweet_count"],
-            "reply_count": row["data"]["legacy"]["reply_count"],
-            "like_count": row["data"]["legacy"]["favorite_count"],
-            "quote_count": row["data"]["legacy"]["quote_count"],
-            "impression_count": row["data"]["views"]["count"],
-            "is_retweet": (retweet)? "yes": "no",
-            "retweeted_user": (retweet) ? row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
-            "is_quote_tweet": (quote_tweet)? "yes": "no",
-            "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
-            "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
-            "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
-            "hashtags": (tags.length > 0) ? tags.join(";") : "",
-            "urls": (row["data"]["legacy"]["entities"]["urls"]["expanded_url"]) ? row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';').toString():"",
-            "images": (photos.length > 0) ? photos.join(";") : "",
-            "videos": (videos.length > 0) ? videos.join(";") : "",
-            "mentions": (mentions.length > 0) ? mentions.join(";") : "",
-            "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
-		
     
-          
-          lines.push(Object.values(rows).join(','))
-          if (header.length == 0) { header = Object.keys(rows);}
-        } );
+    function flatten(object, target, path) {
+        path = path || '';
+        Object.keys(object).forEach(function (key) {
+            if (object[key] && typeof object[key] === 'object') {
+                flatten(object[key], target, path + key);
+                return;
+            }
+            target[path + key] = object[key];
+        });
+    }
+
+    function dodrop(event) {
+        var dt = event.dataTransfer;
+        var files = dt.files;
+  
         
-        const csv = [
-          header.join(','), // header row first
-          lines.join('\n')
-        ].join('\n')
-        document.getElementById('csv').innerText = csv;
-      };
-      reader.readAsText(files[i]);
+
+        for (var i = 0; i < files.length; i++) {
+        reader = new FileReader();
+        reader.onload = function (event) {
+           
+            const input = event.target.result;
+            let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
+
+            const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+
+            const header = {}
+            flatten(result[0], header)
+            console.log(header);
+
+            //get rid of any empty last lines
+            if (result[result.length - 1] == undefined) {
+                result.pop();
+            }
+
+            const csv = [
+                Object.keys(header).join(','), // header row first
+                ...Object.values(result).map(function(r) { 
+			        const row = {}
+			        flatten(r, row)
+			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
+		        })
+            ].join('\r\n')
+            document.getElementById('csv').innerText = csv;
+
+        }
+        reader.readAsText(files[i]);
     }
 }
 
@@ -131,31 +75,6 @@
     downloadLink.click();
 }
 
-	   function createNgrams (length) {
-
-      function flatten(arr) {
-        return arr.reduce(function (flat, toFlatten) {
-          return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-        }, []);
-}
-
-		  let words = []
-      lines.forEach(function(l) { words.concat(l.split(',')[5].split(' ') ) } );
-      console.log(words);
-	    var ngramsArray = [];
-	
-	    for (var i = 0; i < words.length - (length - 1); i++) {
-	        var subNgramsArray = [];
-	
-	        for (var j = 0; j < length; j++) {
-	            subNgramsArray.push(words[i + j])
-	        }
-	
-	        ngramsArray.push(subNgramsArray);
-	    }
-	    console.log(ngramsArray);
-	    return ngramsArray;
-	}
    </script>
 </head>
 <body>
@@ -165,10 +84,9 @@
      ondragover="event.stopPropagation(); event.preventDefault();"
      ondrop="event.stopPropagation(); event.preventDefault();
      dodrop(event);">
-     Drop your Zeeschuimer Twitter file here. Use the export button to download to CSV.
+     Drop your NDJson file here. Use the export button to download to CSV.
 </div>
 <button onclick="downloadCSV('test.csv')">Export</button>
-	<button onclick="createNgrams(2)">Create Ngrams</button>
 <div id="csv"></div>
 
 
