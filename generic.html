@@ -6,15 +6,15 @@
    <script>
     
     function flatten(object, target, path) {
-    path = path || '';
-    Object.keys(object).forEach(function (key) {
-        if (object[key] && typeof object[key] === 'object') {
-            flatten(object[key], target, path + key);
-            return;
-        }
-        target[path + key] = object[key];
-    });
-}
+        path = path || '';
+        Object.keys(object).forEach(function (key) {
+            if (object[key] && typeof object[key] === 'object') {
+                flatten(object[key], target, path + key);
+                return;
+            }
+            target[path + key] = object[key];
+        });
+    }
 
     function dodrop(event) {
         var dt = event.dataTransfer;
@@ -25,15 +25,12 @@
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
         reader.onload = function (event) {
-
-            
-            
+           
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
             const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
 
-            //const header = Object.keys(result[0]);
             const header = {}
             flatten(result[0], header)
             console.log(header);
@@ -42,29 +39,17 @@
             if (result[result.length - 1] == undefined) {
                 result.pop();
             }
-            
-            //result.forEach(function (rows) { 
 
-                //const header = Object.keys(result[0]);
-                //const row = {}
-                //flatten(result, row)
-                
+            const csv = [
+                Object.keys(header).join(','), // header row first
+                ...Object.values(result).map(function(r) { 
+			        const row = {}
+			        flatten(r, row)
+			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
+		        })
+            ].join('\r\n')
+            document.getElementById('csv').innerText = csv;
 
-                //Object.keys(header).forEach(function(h) { lines.push(row[h]) } )
-                /*const csv = [
-                    Object.keys(header).join(','), // header row first
-                    Object.values(row).join('\n')
-                ].join('\n')*/
-                const csv = [
-                    Object.keys(header).join(','), // header row first
-                    ...Object.values(result).map(function(r) { 
-			    const row = {}
-			    flatten(r, row)
-			    return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
-		    })
-                ].join('\r\n')
-                document.getElementById('csv').innerText = csv;
-           // });
         }
         reader.readAsText(files[i]);
     }
