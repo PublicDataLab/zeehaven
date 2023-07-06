@@ -1,2 +1,3 @@
-# ndjson
-Convert ndjson to csv in browser
+# NDJson
+
+A tiny tool to convert an NDJSon file into CSV format.
