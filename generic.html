@@ -60,7 +60,7 @@
                     ...Object.values(result).map(function(r) { 
 			    const row = {}
 			    flatten(r, row)
-			    Object.keys(header).map(fieldName => row[fieldName]).join(',')
+			    return Object.keys(header).map(fieldName => row[fieldName]).join(',')
 		    })
                 ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
