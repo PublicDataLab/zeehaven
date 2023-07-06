@@ -46,8 +46,8 @@
             //result.forEach(function (rows) { 
 
                 //const header = Object.keys(result[0]);
-                const row = {}
-                flatten(result, row)
+                //const row = {}
+                //flatten(result, row)
                 
 
                 //Object.keys(header).forEach(function(h) { lines.push(row[h]) } )
@@ -57,7 +57,11 @@
                 ].join('\n')*/
                 const csv = [
                     Object.keys(header).join(','), // header row first
-                    ...Object.values(result).map(r => Object.keys(header).map(fieldName => console.log(r[fieldName])).join(','))
+                    ...Object.values(result).map(function(r) { 
+			    const row = {}
+			    flatten(r, row)
+			    Object.keys(header).map(fieldName => console.log(row[fieldName])).join(',')
+		    })
                 ].join('\r\n')
                 document.getElementById('csv').innerText = csv;
            // });
