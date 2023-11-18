@@ -1,7 +1,9 @@
-# Zeehaven
+# zeehaven
 
-A tiny tool to convert an NDJson file into CSV format.
+![](zeehaven.png)
 
-The web interface is at:
+a tiny tool to convert [zeeschuimer](https://github.com/digitalmethodsinitiative/zeeschuimer) ndjson file into csv format.
 
-https://iaine.github.io/ndjson/
+web interface available at: https://publicdatalab.github.io/zeehaven/
+
+developed by [iain](https://github.com/iaine/ndjson). designed by [jonathan](http://jonathangray.org/).

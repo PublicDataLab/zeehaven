@@ -1,0 +1,64 @@
+/* styles.css */
+
+body {
+        background-color: rgb(231, 254, 252);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        h1 {
+            font-size: medium;
+            font-weight: normal;
+            background-color: black;
+            color: white;
+            display: inline-block;
+        }
+
+        h2 {
+            font-size: small;
+            font-weight: normal;
+            font-style: italic;
+        }
+
+        .alles {
+            text-align: center;
+        }
+
+
+    #output {
+        background-color : rgb(255, 245, 202);
+        white-space: pre; 
+        border: 1px solid black;
+        font-size: small;
+        font-weight: lighter;
+        min-height: 200px;
+    }
+
+    .beautifulbutton {
+        padding: 10px 10px;
+        font-size: 16px;
+        background-color: black;
+        color: white;
+        cursor: pointer;
+        border: none;
+        border-radius: 10px;
+        font-size: smaller;
+        font-weight: lighter;
+}
+    .buttonhouse {
+        margin: 20px;
+    }
+
+
+    .credits {
+        padding: 5px;
+        text-align: right;
+        font-size: x-small;
+        color: #666; /* Grey font color */
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
