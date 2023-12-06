@@ -5,6 +5,8 @@
   <title>NDJson to CSV</title>
    <script>
     
+    var filename = "";
+
     function flatten(object, target, path) {
         path = path || '';
         Object.keys(object).forEach(function (key) {
@@ -25,6 +27,8 @@
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
         reader.onload = function (event) {
+
+            filename = event.target.fileName;
            
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
@@ -33,7 +37,6 @@
 
             const header = {}
             flatten(result[0], header)
-            console.log(header);
 
             //get rid of any empty last lines
             if (result[result.length - 1] == undefined) {
@@ -48,14 +51,13 @@
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
             ].join('\r\n')
-            document.getElementById('csv').innerText = csv;
 
         }
         reader.readAsText(files[i]);
     }
 }
 
-  function downloadCSV(filename) {
+  function downloadCSV() {
 
 	  const datum = document.getElementById('csv').innerText
     var csvFile;
@@ -78,7 +80,7 @@
    </script>
 </head>
 <body>
-
+<p>Drop your NDJSON file into the box and then click export. </p>
 <div id="output" style="min-height: 200px; white-space: pre; border: 1px solid black;"
      ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
      ondragover="event.stopPropagation(); event.preventDefault();"
