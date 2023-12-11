@@ -38,7 +38,7 @@
 
         for (var i = 0; i < files.length; i++) {
             reader = new FileReader();
-            const filename = files[i].name.replace(".json", ".csv");
+            const filename = files[i].name.replace(".ndjson", ".csv");
             reader.onload = function (event) {
 
             const input = event.target.result;
