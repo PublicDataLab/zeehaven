@@ -28,7 +28,9 @@
         reader = new FileReader();
         reader.onload = function (event) {
 
-            filename = event.target.fileName;
+            //filename = event.target.fileName;
+		filename = "export.csv";
+		console.log(event);
            
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
