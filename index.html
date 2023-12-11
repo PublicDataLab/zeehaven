@@ -6,6 +6,7 @@
    <script>
     
     var filename = "";
+    var csv = "";
 
     function flatten(object, target, path) {
         path = path || '';
@@ -43,7 +44,7 @@
                 result.pop();
             }
 
-            const csv = [
+            csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(result).map(function(r) { 
 			        const row = {}
@@ -59,16 +60,16 @@
 
   function downloadCSV() {
 
-	  const datum = document.getElementById('csv').innerText
-    var csvFile;
-    var downloadLink;
+	const datum = document.getElementById('csv').innerText
+    let csvFile;
+    let downloadLink;
 
 	if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
 		alert("Your browser doesn't support Blobs");
 		return;
 	}
 	
-    csvFile = new Blob([datum], {type:"text/csv"});
+    csvFile = new Blob([csv], {type:"text/csv"});
     downloadLink = document.createElement("a");
     downloadLink.download = filename;
     downloadLink.href = window.URL.createObjectURL(csvFile);
