@@ -73,7 +73,7 @@
 	
     csvFile = new Blob([csv], {type:"text/csv"});
     downloadLink = document.createElement("a");
-    downloadLink.innerHTML = <button> + "Download the Data" + </button>;
+    downloadLink.innerHTML = "<button>Download the Data</button>";
     downloadLink.download = filename;
     downloadLink.href = window.URL.createObjectURL(csvFile);
     downloadLink.style.display = "none";
