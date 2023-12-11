@@ -64,9 +64,9 @@
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
             ].join('\r\n');
-            downloadCSV();
+            downloadCSV(filename, csv);
         }
-        reader.readAsText(filename, csv);
+        reader.readAsText();
     }
 }
 
