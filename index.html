@@ -37,12 +37,10 @@
         
 
         for (var i = 0; i < files.length; i++) {
-        reader = new FileReader();
-        reader.onload = function (event) {
-
-            //filename = event.target.fileName;
+            reader = new FileReader();
             const filename = files[i].name.replace(".json", ".csv");
-           
+            reader.onload = function (event) {
+
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
