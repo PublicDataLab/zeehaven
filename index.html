@@ -18,9 +18,6 @@
     }
   </style>
    <script>
-    
-    var filename = "";
-    var csv = "";
 
     function flatten(object, target, path) {
         path = path || '';
@@ -41,12 +38,10 @@
 
         for (var i = 0; i < files.length; i++) {
         reader = new FileReader();
-        console.log(files[i]);
         reader.onload = function (event) {
 
             //filename = event.target.fileName;
-            filename = "export.csv";
-            console.log(reader);
+            const filename = files[i].name.replace(".json", ".csv");
            
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
@@ -61,7 +56,7 @@
                 result.pop();
             }
 
-            csv = [
+            const csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(result).map(function(r) { 
 			        const row = {}
@@ -71,13 +66,12 @@
             ].join('\r\n');
             downloadCSV();
         }
-        reader.readAsText(files[i]);
+        reader.readAsText(filename, csv);
     }
 }
 
-  function downloadCSV() {
+  function downloadCSV(filename, data) {
 
-    let csvFile;
     let downloadLink;
 
 	if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
@@ -85,7 +79,7 @@
 		return;
 	}
 	
-    csvFile = new Blob([csv], {type:"text/csv"});
+    let csvFile = new Blob([data], {type:"text/csv"});
     downloadLink = document.createElement("a");
     downloadLink.innerHTML = "<button>Download the Data</button>";
     downloadLink.download = filename;
