@@ -4,11 +4,17 @@
   <meta charset="utf-8">
   <title>NDJson to CSV</title>
   <style>
+    #instructions {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        color: black;
+    }
     #output {
         width: 80%;
         min-height: 200px; 
         white-space: pre; 
         border: 1px solid black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        color:darkgray;
     }
   </style>
    <script>
@@ -70,7 +76,6 @@
 
   function downloadCSV() {
 
-	//const datum = document.getElementById('csv').innerText
     let csvFile;
     let downloadLink;
 
@@ -92,17 +97,14 @@
    </script>
 </head>
 <body>
-<p>Drop your NDJSON file into the box and then click export. </p>
+<p id="instructions">Drop your NDJSON file into the box. A file will be exported when it has converted the JSON into CSV.</p>
 <div id="output"
      ondragenter="document.getElementById('output').textContent = ''; event.stopPropagation(); event.preventDefault();"
      ondragover="event.stopPropagation(); event.preventDefault();"
      ondrop="event.stopPropagation(); event.preventDefault();
      dodrop(event);">
-     Drop your NDJson file here. Use the export button to download to CSV.
+     Drop your NDJson file here.
 </div>
-<button></button>
 <div id="csv"></div>
-
-
 </body>
 </html>
