@@ -6,4 +6,4 @@ a tiny tool to convert [zeeschuimer](https://github.com/digitalmethodsinitiative
 
 web interface available at: https://publicdatalab.github.io/zeehaven/
 
-developed by [iain](https://github.com/iaine/ndjson). designed by [jonathan](http://jonathangray.org/).
+developed by [iain](https://github.com/iaine/ndjson). themed by [jonathan](http://jonathangray.org/).
