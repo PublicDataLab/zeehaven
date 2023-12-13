@@ -22,11 +22,10 @@
         var dt = event.dataTransfer;
         var files = dt.files;
   
-        
-
         for (var i = 0; i < files.length; i++) {
-        reader = new FileReader();
-        reader.onload = function (event) {
+            reader = new FileReader();
+            const filename = files[i].name.replace(".ndjson", ".csv");
+            reader.onload = function (event) {
            
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
@@ -50,26 +49,25 @@
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
             ].join('\r\n')
-            document.getElementById('csv').innerText = csv;
+            downloadCSV(filename, csv);
 
         }
         reader.readAsText(files[i]);
     }
 }
 
-  function downloadCSV(filename) {
+function downloadCSV(filename, data) {
 
-	  const datum = document.getElementById('csv').innerText
-    var csvFile;
-    var downloadLink;
+    let downloadLink;
 
-	if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
-		alert("Your browser doesn't support Blobs");
-		return;
-	}
-	
-    csvFile = new Blob([datum], {type:"text/csv"});
+    if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
+        alert("Your browser doesn't support Blobs");
+        return;
+    }
+
+    let csvFile = new Blob([data], {type:"text/csv"});
     downloadLink = document.createElement("a");
+    downloadLink.innerHTML = "<button>Download the Data</button>";
     downloadLink.download = filename;
     downloadLink.href = window.URL.createObjectURL(csvFile);
     downloadLink.style.display = "none";
