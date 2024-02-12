@@ -248,7 +248,7 @@ function parseTikTok (header,data) {
 /**
  * Parse all data. We will not look for certain columns. 
  */
-function parseAll (result) {
+function parseAll (header, result) {
   let header = {}
   flatten(result[0], header)
     console.log(result)
