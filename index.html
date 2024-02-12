@@ -34,16 +34,17 @@
             const _type = document.querySelector('input[name="type"]:checked').value;
 
             const header = {}
+            let csv = "";
             if (_type == "all") {
-                const csv = parseAll(header, result);
+                csv = parseAll(header, result);
                 console.log(csv);
             } else if (_type == "twitter") {
-                const csv = parseTwitter(header, result);
+                csv = parseTwitter(header, result);
             } else if (_type == "instagram") {
-                const csv = parseTwitter(header, result);
-            } else if (_type == "tiktok") {
-                const csv = parseTwitter(header, result);
-            }
+                csv = parseInstagram(header, result);
+            } /*else if (_type == "tiktok") {
+                csv = parseTwitter(header, result);
+            }*/
 
             downloadCSV(filename, csv);
 
