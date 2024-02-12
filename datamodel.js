@@ -244,7 +244,10 @@ function parseTikTok (header, data) {
 /**
  * Parse all data. We will not look for certain columns. 
  */
-function parseAll (header, data) {
+function parseAll (header, result) {
+  const header = {}
+  flatten(result[0], header)
+    console.log(result)
     const _csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(data).map(function(r) { 
@@ -254,4 +257,15 @@ function parseAll (header, data) {
 		        })
             ].join('\r\n')
     return _csv;
+}
+
+function flatten(object, target, path) {
+  path = path || '';
+  Object.keys(object).forEach(function (key) {
+      if (object[key] && typeof object[key] === 'object') {
+          flatten(object[key], target, path + key);
+          return;
+      }
+      target[path + key] = object[key];
+  });
 }
