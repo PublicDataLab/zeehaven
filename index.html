@@ -5,6 +5,7 @@
 
   <link rel="stylesheet" href="style.css">
   <title>zeehaven - convert zeeschuimer ndjson to csv</title>
+  <script type="text/js" src="datamodel.js"></script>
    <script>
     
     function flatten(object, target, path) {
@@ -41,14 +42,27 @@
                 result.pop();
             }
 
-            const csv = [
+            const _type = document.querySelector('input[name="type"]:checked').value;
+
+            if (_type == "all") {
+                const csv = parseAll(header, result);
+            } else if (_type == "twitter") {
+                const csv = parseTwitter(header, result);
+            } else if (_type == "instagram") {
+                const csv = parseTwitter(header, result);
+            } else if (_type == "tiktok") {
+                const csv = parseTwitter(header, result);
+            }
+
+
+            /*const csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(result).map(function(r) { 
 			        const row = {}
 			        flatten(r, row)
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
-            ].join('\r\n')
+            ].join('\r\n')*/
             downloadCSV(filename, csv);
 
         }
@@ -92,6 +106,13 @@ function downloadCSV(filename, data) {
      dodrop(event);">
      drop your ndjson file here. 
      click "export" button to download a csv file.
+</div>
+<div>
+    <p>Please select a conversion or we will convert all columns.</p>
+    <input type="radio" name="type" value="all">
+    <input type="radio" name="type" value="twitter">
+    <input type="radio" name="type" value="instagram">
+    <input type="radio" name="type" value="tiktok">
 </div>
 
 <div class="buttonhouse">
