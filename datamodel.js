@@ -1,7 +1,9 @@
 /**
  * Parse all data looking for Twitter model based on 4cat. 
  */
-function parseTwitter (header, data) {
+function parseTwitter (data) {
+  let header = {}
+  flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
@@ -82,7 +84,9 @@ function parseTwitter (header, data) {
 /**
  * Parse all data looking for Instagram model based on 4cat. 
  */
-function parseInstagram (header, data) {
+function parseInstagram (data) {
+  let header = {}
+  flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
@@ -163,7 +167,9 @@ function parseInstagram (header, data) {
 /**
  * Parse all data looking for Tiktok model based on 4cat. 
  */
-function parseTikTok (header, data) {
+function parseTikTok (data) {
+  let header = {}
+  flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
@@ -244,8 +250,8 @@ function parseTikTok (header, data) {
 /**
  * Parse all data. We will not look for certain columns. 
  */
-function parseAll (header, result) {
-  const header = {}
+function parseAll (result) {
+  let header = {}
   flatten(result[0], header)
     console.log(result)
     const _csv = [
