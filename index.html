@@ -55,6 +55,7 @@
 function downloadCSV(filename, data) {
 
     let downloadLink;
+    console.log(data);
 
     if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
         alert("Your browser doesn't support Blobs");
