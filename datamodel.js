@@ -21,9 +21,7 @@ function parseTwitter (data) {
             console.log(quote_tweet);
           }
 
-		function escapeHTML(str){
-            return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
-          }
+		
           let mentions = [];
 	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
 		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
@@ -187,9 +185,9 @@ function parseTikTok (data) {
             console.log(quote_tweet);
           }
 
-		function escapeHTML(str){
+		/*function escapeHTML(str){
             return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
-          }
+          }*/
           let mentions = [];
 	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
 		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
@@ -274,4 +272,8 @@ function flatten(object, target, path) {
       }
       target[path + key] = object[key];
   });
+}
+
+function escapeHTML(str){
+  return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"");
 }
