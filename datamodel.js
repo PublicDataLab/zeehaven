@@ -177,6 +177,7 @@ function parseAll (header, result) {
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
             ].join('\r\n')
+            console.log(_csv);
     return _csv;
 }
 
