@@ -3,7 +3,7 @@
  */
 function parseTwitter (header, data) {
 
-  flatten(result[0], header)
+  flatten(data[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
@@ -84,7 +84,7 @@ function parseTwitter (header, data) {
  */
 function parseInstagram (header, data) {
 
-  flatten(result[0], header)
+  flatten(data[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
