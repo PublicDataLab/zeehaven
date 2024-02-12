@@ -2,7 +2,7 @@
  * Parse all data looking for Twitter model based on 4cat. 
  */
 function parseTwitter (header, data) {
-
+  let lines = [];
   flatten(data[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
@@ -43,7 +43,7 @@ function parseTwitter (header, data) {
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
-	        "body": `\"${row["data"]["legacy"]["full_text"]}\"`,
+	          "body": `\"${row["data"]["legacy"]["full_text"]}\"`,
             "author": row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"],
             "author_fullname": row["data"]["core"]["user_results"]["result"]["legacy"]["name"],
             "author_id": row["data"]["legacy"]["user_id_str"],
@@ -67,7 +67,7 @@ function parseTwitter (header, data) {
             "videos": (videos.length > 0) ? videos.join(";") : "",
             "mentions": (mentions.length > 0) ? mentions.join(";") : "",
             "place_name": (row["data"]["legacy"]["place"])? row["legacy"]["place"]["full_name"] : ""}
-        lines.push(Object.values(rows).join(','))
+          lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } );
 
