@@ -33,11 +33,10 @@
 
             const _type = document.querySelector('input[name="type"]:checked').value;
 
-            const header = {}
+            let header = []
             let csv = "";
             if (_type == "all") {
                 csv = parseAll(header, result);
-                console.log(csv);
             } else if (_type == "twitter") {
                 csv = parseTwitter(header, result);
             } else if (_type == "instagram") {
