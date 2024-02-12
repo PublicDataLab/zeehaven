@@ -254,7 +254,7 @@ function parseAll (header, result) {
     console.log(result)
     const _csv = [
                 Object.keys(header).join(','), // header row first
-                ...Object.values(data).map(function(r) { 
+                ...Object.values(result).map(function(r) { 
 			        const row = {}
 			        flatten(r, row)
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
