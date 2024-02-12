@@ -36,6 +36,7 @@
             const header = {}
             if (_type == "all") {
                 const csv = parseAll(header, result);
+                console.log(csv);
             } else if (_type == "twitter") {
                 const csv = parseTwitter(header, result);
             } else if (_type == "instagram") {
