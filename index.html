@@ -8,16 +8,6 @@
   <script type="text/javascript" src="datamodel.js"></script>
    <script>
 
-    function flatten(object, target, path) {
-        path = path || '';
-        Object.keys(object).forEach(function (key) {
-            if (object[key] && typeof object[key] === 'object') {
-                flatten(object[key], target, path + key);
-                return;
-            }
-            target[path + key] = object[key];
-        });
-    }
 
     function dodrop(event) {
         var dt = event.dataTransfer;
@@ -43,6 +33,7 @@
 
             const _type = document.querySelector('input[name="type"]:checked').value;
 
+            const header = {}
             if (_type == "all") {
                 const csv = parseAll(header, result);
             } else if (_type == "twitter") {

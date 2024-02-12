@@ -1,8 +1,8 @@
 /**
  * Parse all data looking for Twitter model based on 4cat. 
  */
-function parseTwitter (data) {
-  let header = {}
+function parseTwitter (header, data) {
+
   flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
@@ -82,8 +82,8 @@ function parseTwitter (data) {
 /**
  * Parse all data looking for Instagram model based on 4cat. 
  */
-function parseInstagram (data) {
-  let header = {}
+function parseInstagram (header, data) {
+
   flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
@@ -165,8 +165,8 @@ function parseInstagram (data) {
 /**
  * Parse all data looking for Tiktok model based on 4cat. 
  */
-function parseTikTok (data) {
-  let header = {}
+function parseTikTok (header,data) {
+
   flatten(result[0], header)
     data.forEach(function (row) { 
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
