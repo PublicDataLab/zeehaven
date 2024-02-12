@@ -7,7 +7,7 @@
   <title>zeehaven - convert zeeschuimer ndjson to csv</title>
   <script type="text/js" src="datamodel.js"></script>
    <script>
-    
+
     function flatten(object, target, path) {
         path = path || '';
         Object.keys(object).forEach(function (key) {
@@ -35,7 +35,6 @@
 
             const header = {}
             flatten(result[0], header)
-            console.log(header);
 
             //get rid of any empty last lines
             if (result[result.length - 1] == undefined) {
@@ -54,15 +53,6 @@
                 const csv = parseTwitter(header, result);
             }
 
-
-            /*const csv = [
-                Object.keys(header).join(','), // header row first
-                ...Object.values(result).map(function(r) { 
-			        const row = {}
-			        flatten(r, row)
-			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
-		        })
-            ].join('\r\n')*/
             downloadCSV(filename, csv);
 
         }
@@ -112,7 +102,6 @@ function downloadCSV(filename, data) {
     <input type="radio" name="type" value="all">
     <input type="radio" name="type" value="twitter">
     <input type="radio" name="type" value="instagram">
-    <input type="radio" name="type" value="tiktok">
 </div>
 
 <div class="buttonhouse">
