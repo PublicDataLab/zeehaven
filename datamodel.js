@@ -93,6 +93,7 @@ function parseInstagram (header, data) {
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,./`~']+)");
     data.forEach(function (row) { 
       console.log(row);
+      const dt = new Date(row["data"]["taken_at"]);
       const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
       //if node["media_type"] != SearchInstagram.MEDIA_TYPE_CAROUSEL else len(node["carousel_media"])
       //let num_media = (row["__typename"] != "GraphSidecar")? 1 : row['data']["edge_sidecar_to_children"]["edges"].length;
