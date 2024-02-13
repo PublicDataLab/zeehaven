@@ -232,5 +232,5 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"").replace(",", "\,");
+  return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"").replace(/\,/g,'\\,');
 }
