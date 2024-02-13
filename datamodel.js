@@ -140,7 +140,7 @@ function parseInstagram (header, data) {
             "thread_id": _id,
             "parent_id": _id,
             "body" : caption, 
-            "author": row["owner"]["username"],
+            "author": row['data']["owner"]["username"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? row["data"]["user"]["full_name"]:"",
             //row["owner"].get("profile_pic_url", ""),
