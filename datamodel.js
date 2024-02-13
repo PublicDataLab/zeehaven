@@ -141,7 +141,7 @@ function parseInstagram (header, data) {
         display_url = media_url;
       }
  
-      location = {"name": "", "latlong": "", "city": ""}
+      let location = {"name": "", "latlong": "", "city": ""}
 
       if (row['data']["location"]) {
         location["name"] = row['data']["location"]["name"];
