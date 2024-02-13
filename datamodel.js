@@ -97,6 +97,12 @@ function parseInstagram (header, data) {
       //let num_media = (row["__typename"] != "GraphSidecar")? 1 : row['data']["edge_sidecar_to_children"]["edges"].length;
       let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
 
+      let num_comments = -1;
+      if (row['data']['comment_counts']) {
+        num_comments = row['data']['comment_counts']
+      } else if (row['data']['comments'] && (typeof row['data']['comments'] == 'list')) {
+        num_comments = row['data']['comments'].length();
+      }
         /* get media url
         # for carousels, get the first media item, for videos, get the video
         # url, for photos, get the highest resolution */
@@ -140,16 +146,16 @@ function parseInstagram (header, data) {
             "author_avatar_url": (row['data']['user']['caption']["profile_pic_url"])? "profile_pic_url": "",
             "type": media_type,
             "url": "https://www.instagram.com/p/" + _id,
-            "image_url": node["display_url"],
+            "image_url": display_url,
             "media_url": media_url,
             "hashtags": caption.matchAll(re).join(),
             "num_likes": row["data"]["like_count"],
-            "num_comments": row.get("edge_media_preview_comment", {}).get("count", 0),
+            "num_comments": num_comments,
             "num_media": num_media,
             "location_name": location["name"],
             "location_latlong": location["latlong"],
             "location_city": location["city"],
-            "unix_timestamp": node["taken_at"]
+            "unix_timestamp": row['data']["taken_at"]
           }
         lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
