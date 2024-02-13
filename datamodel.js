@@ -174,11 +174,14 @@ function parseInstagram (header, data) {
             "location_city": location["city"],
             "unix_timestamp": row['data']["taken_at"]
           }
+          console.log(rows);
+          lines.push(Object.values(rows).join(','))
+          if (header.length == 0) { header = Object.keys(rows);}
+          //stop();
         } catch (error) {
           console.log(error)
         }
-          lines.push(Object.values(rows).join(','))
-          if (header.length == 0) { header = Object.keys(rows);}
+          
         } );
 
         const csv = [
