@@ -110,21 +110,18 @@ function parseInstagram (header, data) {
       let display_url = "";
 
       let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
-      let media_type = "";
+      let media_type = "unknown";
       try {
       
       const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"}
-      let media_types = []
       if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
         media_type = (type_map[row['data']["media_type"]])?  type_map[row['data']["media_type"]]: "unknown";
       } else {
         let media_types = new Set();
         if (row['data']["carousel_media"] != undefined) {
-          console.log('shouldnot see')
           row['data']["carousel_media"].forEach(x => media_types.add(x));
         }
-        console.log(media_types.size);
-        media_type = (media_types.size > 1) ? "mixed": "unknown";
+        if (media_types.size > 1) { media_type = "mixed" };
       }
 
       if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) { 
