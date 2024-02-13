@@ -145,7 +145,7 @@ function parseInstagram (header, data) {
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? row["data"]["user"]["full_name"]:"",
             //row["owner"].get("profile_pic_url", ""),
-            "author_avatar_url": (row['data']['user']['caption']["profile_pic_url"])? row['data']['user']['caption']["profile_pic_url"]: "",
+            "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
             "type": media_type,
             "url": "https://www.instagram.com/p/" + _id,
             "image_url": display_url,
