@@ -83,6 +83,7 @@ function parseTwitter (header, data) {
  * Parse all data looking for Instagram model based on 4cat. 
  */
 function parseInstagram (header, data) {
+  console.log(data);
 
   const MEDIA_TYPE_PHOTO = 1;
   const MEDIA_TYPE_VIDEO = 2;
