@@ -97,7 +97,6 @@ function parseInstagram (header, data) {
       const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
       //if node["media_type"] != SearchInstagram.MEDIA_TYPE_CAROUSEL else len(node["carousel_media"])
       //let num_media = (row["__typename"] != "GraphSidecar")? 1 : row['data']["edge_sidecar_to_children"]["edges"].length;
-      let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
 
       let num_comments = -1;
       if (row['data']['comment_counts']) {
@@ -112,6 +111,18 @@ function parseInstagram (header, data) {
       let media_node = "";
       let media_url = "";
       let display_url = "";
+
+      let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
+
+      let media_type = type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"}
+      let media_types = []
+      if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
+        media_type = type_map.get(node["media_type"], "unknown")
+      } else {
+        media_types = Set()
+        row['data']["carousel_media"].forEach(x => media_types.add(x));
+        media_type = (len(media_types) > 1) ? "mixed": "unknown";
+      }
 
       if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) { 
         media_node = row['data']["media_type"][0]
