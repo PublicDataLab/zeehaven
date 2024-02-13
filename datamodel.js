@@ -117,7 +117,7 @@ function parseInstagram (header, data) {
       if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
         media_type = (type_map[row['data']["media_type"]])?  type_map[row['data']["media_type"]]: "unknown";
       } else {
-        media_types = Set()
+        media_types = new Set()
         row['data']["carousel_media"].forEach(x => media_types.add(x));
         media_type = (len(media_types) > 1) ? "mixed": "unknown";
       }
