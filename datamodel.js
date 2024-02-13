@@ -92,11 +92,8 @@ function parseInstagram (header, data) {
   //let's create the regex once as const and call over each row
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)", "gi");
     data.forEach(function (row) { 
-      console.log(row);
       const dt = new Date(row["data"]["taken_at"]);
       const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
-      //if node["media_type"] != SearchInstagram.MEDIA_TYPE_CAROUSEL else len(node["carousel_media"])
-      //let num_media = (row["__typename"] != "GraphSidecar")? 1 : row['data']["edge_sidecar_to_children"]["edges"].length;
 
       let num_comments = -1;
       if (row['data']['comment_counts']) {
@@ -157,13 +154,12 @@ function parseInstagram (header, data) {
             "author": row['data']["owner"]["username"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? row["data"]["user"]["full_name"]:"",
-            //row["owner"].get("profile_pic_url", ""),
             "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
             "type": media_type,
             "url": "https://www.instagram.com/p/" + _id,
             "image_url": display_url,
             "media_url": media_url,
-            "hashtags": tags.join(';'),
+            "hashtags": (tags.length > 0) ? tags.join(";") : "",
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
             "num_media": num_media,
@@ -172,7 +168,7 @@ function parseInstagram (header, data) {
             "location_city": location["city"],
             "unix_timestamp": row['data']["taken_at"]
           }
-        lines.push(Object.values(rows).join(','))
+          lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } );
 
