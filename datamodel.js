@@ -163,7 +163,7 @@ function parseInstagram (header, data) {
             "url": "https://www.instagram.com/p/" + _id,
             "image_url": display_url,
             "media_url": media_url,
-            "hashtags": tags,
+            //"hashtags": tags,
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
             "num_media": num_media,
