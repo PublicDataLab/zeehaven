@@ -111,14 +111,19 @@ function parseInstagram (header, data) {
 
       let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
 
+      try {
       let media_type = "";
       const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"}
       let media_types = []
       if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
         media_type = (type_map[row['data']["media_type"]])?  type_map[row['data']["media_type"]]: "unknown";
       } else {
-        let media_types = new Set()
-        row['data']["carousel_media"].forEach(x => media_types.add(x));
+        let media_types = new Set();
+        if (row['data']["carousel_media"] != undefined) {
+          console.log('shouldnot see')
+          row['data']["carousel_media"].forEach(x => media_types.add(x));
+        }
+        console.log(media_types.size);
         media_type = (media_types.size > 1) ? "mixed": "unknown";
       }
 
@@ -135,6 +140,9 @@ function parseInstagram (header, data) {
         media_url = row["data"]["image_versions2"]["candidates"][0]["url"]
         display_url = media_url;
       }
+    } catch (error) {
+      console.log(error);
+    }
  
       location = {"name": "", "latlong": "", "city": ""}
 
@@ -146,6 +154,7 @@ function parseInstagram (header, data) {
       }
       const _id = row['data']["id"];
       let tags = [...caption.matchAll(re)];
+      try {
       const rows = {
             "id": _id,
             "thread_id": _id,
@@ -168,6 +177,9 @@ function parseInstagram (header, data) {
             "location_city": location["city"],
             "unix_timestamp": row['data']["taken_at"]
           }
+        } catch (error) {
+          console.log(error)
+        }
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } );
