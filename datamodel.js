@@ -177,7 +177,6 @@ function parseInstagram (header, data) {
           console.log(rows);
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
-          //stop();
         } catch (error) {
           console.log(error)
         }
