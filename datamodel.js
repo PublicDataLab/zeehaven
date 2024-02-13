@@ -93,8 +93,6 @@ function parseInstagram (header, data) {
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)", "gi");
     data.forEach(function (row) { 
       let dt = new Date(row["data"]["taken_at"]*1000);
-      console.log(row["data"]["taken_at"]*1000);
-      console.log(dt);
 
       const caption = (row['data']["caption"]["text"]) ? escapeHTML(row['data']["caption"]["text"]):"";
 
