@@ -10,10 +10,9 @@ function parseTwitter (header, data) {
           const retweet = row["data"]["legacy"]["retweeted"]
           if (retweet) { 
             retweet["result"] = retweet["result"]["tweet"] 
-            console.log(retweet);
             const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] +
                      ": " + row["data"]["result"]["legacy"]["full_text"]
-            row["legacy"]["full_text"] = rt_text
+            row["legacy"]["full_text"] = escapeHTML(rt_text);
           }
 
           const quote_tweet = row['data']["is_quote_status"];
