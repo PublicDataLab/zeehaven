@@ -110,9 +110,9 @@ function parseInstagram (header, data) {
       let display_url = "";
 
       let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
-
-      try {
       let media_type = "";
+      try {
+      
       const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"}
       let media_types = []
       if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
