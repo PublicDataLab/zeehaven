@@ -90,7 +90,7 @@ function parseInstagram (header, data) {
 
   flatten(data[0], header);
   //let's create the regex once as const and call over each row
-  const re = new RegExp("/#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,./`~']+)/g");
+  const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)");
     data.forEach(function (row) { 
       console.log(row);
       const dt = new Date(row["data"]["taken_at"]);
