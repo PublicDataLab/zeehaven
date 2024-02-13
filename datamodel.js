@@ -84,9 +84,9 @@ function parseTwitter (header, data) {
  */
 function parseInstagram (header, data) {
 
-  MEDIA_TYPE_PHOTO = 1
-  MEDIA_TYPE_VIDEO = 2
-  MEDIA_TYPE_CAROUSEL = 8
+  const MEDIA_TYPE_PHOTO = 1;
+  const MEDIA_TYPE_VIDEO = 2;
+  const MEDIA_TYPE_CAROUSEL = 8;
 
   flatten(data[0], header);
   //let's create the regex once as const and call over each row
