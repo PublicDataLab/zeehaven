@@ -92,7 +92,9 @@ function parseInstagram (header, data) {
   //let's create the regex once as const and call over each row
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)", "gi");
     data.forEach(function (row) { 
-      const dt = new Date(row["data"]["taken_at"]);
+      let dt = new Date(row["data"]["taken_at"]);
+      console.log(dt);
+      stop();
       const caption = (row['data']["caption"]["text"]) ? escapeHTML(row['data']["caption"]["text"]):"";
 
       let num_comments = -1;
@@ -137,9 +139,6 @@ function parseInstagram (header, data) {
         media_url = row["data"]["image_versions2"]["candidates"][0]["url"]
         display_url = media_url;
       }
-    } catch (error) {
-      console.log(error);
-    }
  
       location = {"name": "", "latlong": "", "city": ""}
 
@@ -151,12 +150,12 @@ function parseInstagram (header, data) {
       }
       const _id = row['data']["id"];
       let tags = [...caption.matchAll(re)];
-      try {
+
       const rows = {
             "id": _id,
             "thread_id": _id,
             "parent_id": _id,
-            "body" : caption, 
+            "body" : '"' + caption + '"', 
             "author": row['data']["owner"]["username"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? row["data"]["user"]["full_name"]:"",
@@ -169,12 +168,11 @@ function parseInstagram (header, data) {
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
             "num_media": num_media,
-            "location_name": location["name"],
-            "location_latlong": location["latlong"],
+            "location_name": '"' + location["name"]+ '"',
+            "location_latlong": '"' + location["latlong"]+ '"',
             "location_city": location["city"],
             "unix_timestamp": row['data']["taken_at"]
           }
-          console.log(rows);
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } catch (error) {
