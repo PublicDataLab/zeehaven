@@ -83,7 +83,6 @@ function parseTwitter (header, data) {
  * Parse all data looking for Instagram model based on 4cat. 
  */
 function parseInstagram (header, data) {
-  console.log(data);
 
   const MEDIA_TYPE_PHOTO = 1;
   const MEDIA_TYPE_VIDEO = 2;
@@ -93,6 +92,7 @@ function parseInstagram (header, data) {
   //let's create the regex once as const and call over each row
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,./`~']+)");
     data.forEach(function (row) { 
+      console.log(row);
       const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
       //if node["media_type"] != SearchInstagram.MEDIA_TYPE_CAROUSEL else len(node["carousel_media"])
       //let num_media = (row["__typename"] != "GraphSidecar")? 1 : row['data']["edge_sidecar_to_children"]["edges"].length;
@@ -113,7 +113,7 @@ function parseInstagram (header, data) {
       let display_url = "";
 
       if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) { 
-        row['data']["media_type"][0]
+        media_node = row['data']["media_type"][0]
       } else if (row['data']["media_type"] == MEDIA_TYPE_VIDEO) {
         media_url = row['data']["video_versions"][0]["url"];
         if (row["data"]["image_versions2"]) {
