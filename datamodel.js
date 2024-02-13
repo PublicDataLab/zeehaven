@@ -148,7 +148,7 @@ function parseInstagram (header, data) {
         location["city"] = row['data']["location"]["city"]
       }
       const _id = row['data']["id"];
-      const tags = [...caption.matchAll(re)];
+      let tags = [...caption.matchAll(re)];
       const rows = {
             "id": _id,
             "thread_id": _id,
@@ -163,7 +163,7 @@ function parseInstagram (header, data) {
             "url": "https://www.instagram.com/p/" + _id,
             "image_url": display_url,
             "media_url": media_url,
-            //"hashtags": tags,
+            "hashtags": tags.join(';'),
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
             "num_media": num_media,
