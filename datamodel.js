@@ -93,7 +93,7 @@ function parseInstagram (header, data) {
   const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)", "gi");
     data.forEach(function (row) { 
       const dt = new Date(row["data"]["taken_at"]);
-      const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
+      const caption = (row['data']["caption"]["text"]) ? escapeHTML(row['data']["caption"]["text"]):"";
 
       let num_comments = -1;
       if (row['data']['comment_counts']) {
