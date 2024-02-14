@@ -89,7 +89,7 @@ function parseInstagram (header, data) {
 
   flatten(data[0], header);
   //let's create the regex once as const and call over each row
-  const re = new RegExp("#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)", "gi");
+  const re = /#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)/g;
     data.forEach(function (row) { 
       let dt = new Date(row["data"]["taken_at"]*1000);
 
@@ -162,7 +162,7 @@ function parseInstagram (header, data) {
             "url": "https://www.instagram.com/p/" + _id,
             "image_url": display_url,
             "media_url": media_url,
-            "hashtags": (tags.length > 0) ? tags.join(";") : "",
+            "hashtags": (tags.length > 0) ? tags.join() : "",
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
             "num_media": num_media,
