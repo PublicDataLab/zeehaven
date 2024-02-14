@@ -146,7 +146,7 @@ function parseInstagram (header, data) {
         location["latlong"] = (row['data']["location"]["lat"]) ? row['data']["location"]["lat"] + "," + row['data']["location"]["lng"] : "";
         location["city"] = row['data']["location"]["city"]
       }
-      const _id = row['data']["id"];
+      const _id = row['data']["code"];
       let tags = [...caption.matchAll(re)];
 
       const rows = {
