@@ -93,7 +93,7 @@ function parseInstagram (header, data) {
     data.forEach(function (row) { 
       let dt = new Date(row["data"]["taken_at"]*1000);
 
-      const caption = (row['data']["caption"]["text"]) ? row['data']["caption"]["text"]:"";
+      const caption = (row['data']["caption"]["text"]) ? escapeHTML(row['data']["caption"]["text"]):"";
 
       let num_comments = -1;
       if (row['data']['comment_counts']) {
@@ -141,7 +141,7 @@ function parseInstagram (header, data) {
       let location = {"name": "", "latlong": "", "city": ""}
 
       if (row['data']["location"]) {
-        location["name"] = row['data']["location"]["name"];
+        location["name"] = row['data']["location"]["name"].toString();
         // Leaving this though it does not appear to be used in this type; maybe we'll be surprised in the future...
         location["latlong"] = (row['data']["location"]["lat"]) ? row['data']["location"]["lat"] + "," + row['data']["location"]["lng"] : "";
         location["city"] = row['data']["location"]["city"]
@@ -153,7 +153,7 @@ function parseInstagram (header, data) {
             "id": _id,
             "thread_id": _id,
             "parent_id": _id,
-            "body" : '"' + caption + '"', 
+            "body" : `"${caption}"`, 
             "author": row['data']["owner"]["username"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? row["data"]["user"]["full_name"]:"",
@@ -228,5 +228,5 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  return new Option(str).innerHTML.replace(/\n/g,'\\n').replace(/\"/g, "\"\"").replace(/,/g,'\\,');
+  return new Option(str).innerHTML.replace(/\n/g,"\\n");
 }
