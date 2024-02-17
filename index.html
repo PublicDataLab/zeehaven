@@ -15,33 +15,35 @@
   
         for (var i = 0; i < files.length; i++) {
             reader = new FileReader();
-            const filename = files[i].name.replace(".ndjson", ".csv");
+            const fname = files[i].name.split('-');
+            const _date = new Date();
+            const filename = [fname[0], fname[1], fname[2], _date.toISOString() + ".csv"].join('-');
             reader.onload = function (event) {
            
             const input = event.target.result;
             let result = input.split('\n').map(function(s) { if (s) { return JSON.parse(s); } });
 
-            const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-
-            /*const header = {}
-            flatten(result[0], header)*/
+            const replacer = (key, value) => value === null ? '' : value;
 
             //get rid of any empty last lines
             if (result[result.length - 1] == undefined) {
                 result.pop();
             }
 
-            const _type = document.querySelector('input[name="type"]:checked').value;
+            //const _type = document.querySelector('input[name="type"]:checked').value;
+            const _type = fname[2];
 
             let header = []
             let csv = "";
-            if (_type == "all") {
-                csv = parseAll(header, result);
-            } else if (_type == "twitter") {
+            if (_type == "twitter.com") {
                 csv = parseTwitter(header, result);
-            } else if (_type == "instagram") {
+            } else if (_type == "instagram.com") {
                 csv = parseInstagram(header, result);
-            } /*else if (_type == "tiktok") {
+            } else {
+                csv = parseAll(header, result);
+            }
+                
+            /*else if (_type == "tiktok") {
                 csv = parseTwitter(header, result);
             }*/
 
@@ -89,12 +91,6 @@ function downloadCSV(filename, data) {
      dodrop(event);">
      drop your ndjson file here. 
      click "export" button to download a csv file.
-</div>
-<div>
-    <p>Please select a conversion or we will convert all columns.</p>
-    <div><input type="radio" name="type" value="all" checked="checked"> All </div>
-    <div><input type="radio" name="type" value="twitter"> Twitter </div>
-    <div><input type="radio" name="type" value="instagram"> Instagram </div>
 </div>
 
 <div class="buttonhouse">

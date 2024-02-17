@@ -104,7 +104,6 @@ function parseInstagram (header, data) {
         /* get media url
         # for carousels, get the first media item, for videos, get the video
         # url, for photos, get the highest resolution */
-      //let media_node = (row['data']["__typename"] == "GraphSidecar") ? row['data']["edge_sidecar_to_children"]["edges"][0]["node"] : row
       let media_node = "";
       let media_url = "";
       let display_url = "";
@@ -147,7 +146,13 @@ function parseInstagram (header, data) {
         location["city"] = row['data']["location"]["city"]
       }
       const _id = row['data']["code"];
-      let tags = [...caption.matchAll(re)];
+
+      let tags = [];
+      [...caption.matchAll(re)].forEach(function(_tag){ 
+        //getting both bash and no-hash. Remove the latter. 
+        const t = _tag.toString().split(',')
+        if (t[0].charAt(0) == "#") tags.push(t[0]); 
+      });
 
       const rows = {
             "id": _id,
@@ -228,5 +233,5 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  return new Option(str).innerHTML.replace(/\n/g,"\\n");
+  return new Option(str).innerHTML.replace(/\n/g,"\n");
 }
