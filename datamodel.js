@@ -160,7 +160,7 @@ function parseInstagram (header, data) {
             "parent_id": _id,
             "body" : `"${caption}"`, 
             "author": `"${row['data']["owner"]["username"]}"`,
-            "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
+            "timestamp": dt.getFullYear() + "-" + (dt.getMonth()  + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:"",
             "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
             "type": media_type,
