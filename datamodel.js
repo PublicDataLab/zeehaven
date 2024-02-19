@@ -192,6 +192,7 @@ function parseInstagram (header, data) {
         return csv;
 }
 /** Need to parse graphs
+ * function parseInstagramGraph (header, data)
  * type_map = {"GraphSidecar": "photo", "GraphVideo": "video"}
       if (row['data']["__typename"] != "GraphSidecar") {
         media_type = type_map.get(row['data']["__typename"], "unknown")
@@ -233,9 +234,5 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  console.log(str)
-  //return new Option(str).innerHTML.replace(/[\r\n]/gm,"\n");
   return str.replaceAll("\n","  ").replace(/(['",])/g, "\$1").replaceAll(',', '‚');
-
-  //return new Option(str).innerText.replace(/\r\n/g,"\n").replace(/\n/g,"\n").replace(/(['"])/g, "\\$1");
 }
