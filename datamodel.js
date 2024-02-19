@@ -94,7 +94,7 @@ function parseInstagram (header, data) {
       let dt = new Date(row["data"]["taken_at"]*1000);
 
       const caption = (row['data']["caption"]["text"]) ? escapeHTML(row['data']["caption"]["text"]):"";
-
+      console.log(`"${caption}"`);
       let num_comments = -1;
       if (row['data']['comment_counts']) {
         num_comments = row['data']['comment_counts']
@@ -233,5 +233,9 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  return new Option(str).innerHTML.replace(/\r\n/g,"\n").replace(/\n/g,"\n");
+  console.log(str)
+  //return new Option(str).innerHTML.replace(/[\r\n]/gm,"\n");
+  return str.replaceAll("\n","  ").replace(/(['",])/g, "\$1").replaceAll(',', '‚');
+
+  //return new Option(str).innerText.replace(/\r\n/g,"\n").replace(/\n/g,"\n").replace(/(['"])/g, "\\$1");
 }
