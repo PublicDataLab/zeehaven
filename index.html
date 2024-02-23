@@ -39,7 +39,9 @@
                 csv = parseTwitter(header, result);
             } else if (_type == "instagram.com") {
                 csv = parseInstagram(header, result);
-            } else {
+            } else if (_type == "tiktok.com") {
+                csv = parseTiktok(header, result);
+            }else {
                 csv = parseAll(header, result);
             }
 
@@ -53,7 +55,6 @@
 function downloadCSV(filename, data) {
 
     let downloadLink;
-    console.log(data);
 
     if (window.Blob == undefined || window.URL == undefined || window.URL.createObjectURL == undefined) {
         alert("Your browser doesn't support Blobs");
