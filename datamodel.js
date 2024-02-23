@@ -289,7 +289,6 @@ function parseTiktok (header, data) {
       row['data']["stickersOnItem"].forEach(
         w => w["stickerText"].forEach(y => stickers.push(escapeHTML(y))));
     }
-
     const rows = {
       "id": row['data']["id"],
       "thread_id": row['data']["id"],
@@ -298,7 +297,7 @@ function parseTiktok (header, data) {
       "author_followers": row['data']["authorStats"]["followerCount"],
       "author_likes": row['data']["authorStats"]["diggCount"],
       "author_videos": row['data']["authorStats"]["videoCount"],
-      "author_avatar": row['data']["avatarThumb"],
+      "author_avatar": row['data']['author']["avatarThumb"],
       "body": `"${row['data']["desc"]}"`,
       "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
       "unix_timestamp": row['data']["createTime"],
