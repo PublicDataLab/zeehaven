@@ -93,7 +93,10 @@ function parseInstagram (header, data) {
     data.forEach(function (row) { 
       let dt = new Date(row["data"]["taken_at"]*1000);
 
-      const caption = (row['data']["caption"]["text"] != null) ? escapeHTML(row['data']["caption"]["text"]):"";
+      console.log(row['data']["caption"]["text"]);
+      const caption = ("text" in row['data']["caption"]) ? escapeHTML(row['data']["caption"]["text"]):"";
+      
+      //const caption = (row['data']["caption"]["text"] != null) ? escapeHTML(row['data']["caption"]["text"]):"";
       console.log(`"${caption}"`);
       let num_comments = -1;
       if (row['data']['comment_counts']) {
