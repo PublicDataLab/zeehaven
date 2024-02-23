@@ -202,13 +202,147 @@ function parseInstagram (header, data) {
       }
  */
 
+      /**
+       * Parse Zeeschuimer Tiktok
+       */
+function parseTiktok (header, data) {
+  let lines = [];
+  flatten(data[0], header)
+  data.forEach(function(row) {
+    //challenges = [[challenge["title"] for challenge in post.get("challenges", [])]]
+    challenges = []
+    if (row['data']['challenges'] != null) {
+      row['data']['challenges'].forEach(challenge => challenges.push(challenge.title));
+    }
+
+    hashtags = []
+    if (row['data']['contents'] != null) {
+      row['data']['contents'].forEach(function (r) {
+        if (r['textExtra'] != null) {
+          r['textExtra'].forEach(function (tag) {
+            if (tag['hashtagName'] != "") { hashtags.push(tag['hashtagName']) }
+          });
+        }
+      }
+  )}
+  
+    labels = []
+    if ((row['data']["diversificationLabels"] != null && 
+        typeof (row['data']["diversificationLabels"] == 'list'))) {
+          labels = row['data']["diversificationLabels"]
+    }
+
+    user_nickname = ""
+    user_fullname = ""
+    user_id = ""
+
+    
+    if (typeof(row['data']['author']) == Object) {
+      const _u = JSON.parse(row['data']['author'])
+      console.log(_u)
+      user_nickname = row['data']["author"]["uniqueId"]
+      user_fullname = row['data']["author"]["nickname"]
+      user_id = row['data']["author"]["id"]
+    } else {
+      user_nickname = row['data']["author"]["uniqueId"]
+      user_fullname = row['data']["author"]["nickname"]
+      user_id = ""
+    }
+
+    thumbnail_options = []
+    if (row['data']["video"]!= null) {
+      if (JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"] != " ") {
+      thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"]);
+      }
+    }
+
+    if (row['data']["video"] != null) {
+      if (JSON.parse(JSON.stringify(row['data']["video"]))["cover"] != " ") {
+      thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["cover"]);
+      }
+    }
+
+    thumbnail_url = []
+    const now = new Date()/1000;
+    
+    thumbnail_url = []
+    thumbnail_options.forEach(function (thumb)  {
+      if ( parseInt(parse_qs(thumb)['x-expires']) >= now) {
+        if (thumb != " ") { thumbnail_url.push(thumb); }
+      }
+    } 
+    
+    )
+
+    let effects = []
+    if(row['data']["effectStickers"] != null) { 
+      row['data']["effectStickers"].forEach(e => effects.push(escapeHTML(e["name"])));
+    }
+
+    let warnings = []
+    if(row['data']["warning Info"] != null) {
+      row['data']["warningInfo"].forEach(w => warnings.push(escapeHTML(w["text"])));
+    }
+
+    let stickers = []
+    if( row['data']["stickersOnItem"] != null) {
+      row['data']["stickersOnItem"].forEach(
+        w => w["stickerText"].forEach(y => stickers.push(escapeHTML(y))));
+    }
+
+    const rows = {
+      "id": row['data']["id"],
+      "thread_id": row['data']["id"],
+      "author": `"${user_nickname}"`,
+      "author_full": `"${user_fullname}"`,
+      "author_followers": row['data']["authorStats"]["followerCount"],
+      "author_likes": row['data']["authorStats"]["diggCount"],
+      "author_videos": row['data']["authorStats"]["videoCount"],
+      "author_avatar": row['data']["avatarThumb"],
+      "body": `"${row['data']["desc"]}"`,
+      "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
+      "unix_timestamp": row['data']["createTime"],
+      "is_duet":  (row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
+      "is_ad": (row['data']["isAd"] == "yes")? "yes" : "no",
+      "music_name": `"${row['data']["music"]["title"]}"`,
+      "music_id": row['data']["music"]["id"],
+      "music_url": (row['data']["music"]["playUrl"] != null) ? row['data']["music"]["playUrl"] : "",
+      "music_thumbnail": (row['data']["music"]["coverLarge"] != null) ? row['data']["music"]["coverLarge"] : "",
+      "music_author": (row['data']["music"]["authorName"] != null) ? `"${row['data']["music"]["authorName"]}"` : "",
+      "video_url": (row['data']["video"]["downloadAddr"] != null) ? row['data']["video"]["downloadAddr"] : "",
+      "tiktok_url": "https://www.tiktok.com/" + user_nickname + "/video/" + row['data']['id'],
+      "thumbnail_url": `"${thumbnail_url}"`,
+      "likes": row['data']["stats"]["diggCount"],
+      "comments": row['data']["stats"]["commentCount"],
+      "shares": row['data']["stats"]["shareCount"],
+      "plays": row['data']["stats"]["playCount"],
+      "hashtags": `"${hashtags.join(',')}"`,
+      "challenges": `"${challenges.join(',')}"`,
+      "diversification_labels": `"${labels}"`,
+      "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
+      "stickers": `"${stickers.join(',')}"`,
+      "effects": `"${effects.join(',')}"`,
+      "warning": `"${warnings.join(',')}"`
+  }
+    lines.push(Object.values(rows).join(','))
+    if (header.length == 0) { header = Object.keys(rows);}
+  })
+
+  const csv = [
+    header.join(','), // header row first
+    lines.join('\n')
+  ].join('\n');
+
+  return csv;
+
+}
 /**
  * Parse all data. We will not look for certain columns. 
  */
 function parseAll (header, result) {
 
   flatten(result[0], header)
-    console.log(result)
+
     const _csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(result).map(function(r) { 
@@ -235,3 +369,24 @@ function flatten(object, target, path) {
 function escapeHTML(str){
   return str.replaceAll("\n","  ").replace(/(['",])/g, "\$1").replaceAll(',', '‚');
 }
+
+function parse_qs (urlArray){ 
+  const q = {}
+
+  if (typeof(urlArray) == 'string') {
+    let _url = urlArray.split("?")[1];
+    const splitq = _url.split('=')
+    q[splitq[0]] = splitq[1]
+  } else {
+    urlArray.forEach(function (url) {
+      if (url != "") {
+        let _url = url.split("?")[1];
+        _url.split('&').forEach(function(_q) {
+          const splitq = _q.split('=')
+          q[splitq[0]] = splitq[1]
+        });
+      }
+    });
+  }
+  return q;
+ };
