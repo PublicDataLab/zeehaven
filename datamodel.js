@@ -12,7 +12,7 @@ function parseTwitter (header, data) {
             retweet["result"] = retweet["result"]["tweet"] 
             const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] +
                      ": " + row["data"]["result"]["legacy"]["full_text"]
-            row["legacy"]["full_text"] = escapeHTML(rt_text);
+            row['data']["legacy"]["full_text"] = escapeHTML(rt_text);
           }
 
           const quote_tweet = row['data']["is_quote_status"];
