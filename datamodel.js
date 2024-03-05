@@ -203,7 +203,7 @@ function parseInstagram (header, data) {
  */
 
       /**
-       * Parse Zeeschuimer Tiktok
+       * Parse Zeeschuimer Tiktok to the 4cat model
        */
 function parseTiktok (header, data) {
   let lines = [];
