@@ -297,7 +297,7 @@ function parseTiktok (header, data) {
       "thread_id": row['data']["id"],
       "author": `"${user_nickname}"`,
       "author_full": `"${user_fullname}"`,
-      "author_followers": row['data']["authorStats"]["followerCount"],
+      "author_followers": (row['data']["authorStats"])? row['data']["authorStats"]["followerCount"] : "",
       "author_likes": row['data']["authorStats"]["diggCount"],
       "author_videos": row['data']["authorStats"]["videoCount"],
       "author_avatar": row['data']['author']["avatarThumb"],
