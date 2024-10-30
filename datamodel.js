@@ -292,12 +292,18 @@ function parseTiktok (header, data) {
       row['data']["stickersOnItem"].forEach(
         w => w["stickerText"].forEach(y => stickers.push(escapeHTML(y))));
     }
+
+    authStats = 0;
+    if (!'authorStats' in row['data'] || row['data']["authorStats"] != undefined) {
+      authStats = row['data']["authorStats"]["followerCount"];
+    }
+
     const rows = {
       "id": row['data']["id"],
       "thread_id": row['data']["id"],
       "author": `"${user_nickname}"`,
       "author_full": `"${user_fullname}"`,
-      "author_followers": (row['data']["authorStats"] && row['data']["authorStats"] != undefined)? row['data']["authorStats"]["followerCount"] : 0,
+      "author_followers": authStats,
       "author_likes": row['data']["authorStats"]["diggCount"],
       "author_videos": row['data']["authorStats"]["videoCount"],
       "author_avatar": row['data']['author']["avatarThumb"],
