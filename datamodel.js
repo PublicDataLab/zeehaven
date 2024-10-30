@@ -294,8 +294,12 @@ function parseTiktok (header, data) {
     }
 
     authStats = 0;
+    likes = 0;
+    videos = 0;
     if ('authorStats' in row['data'] && row['data']["authorStats"] != undefined) {
       authStats = row['data']["authorStats"]["followerCount"];
+      likes = row['data']["authorStats"]["diggCount"];
+      videos = row['data']["authorStats"]["videoCount"]
     }
 
     const rows = {
@@ -304,8 +308,8 @@ function parseTiktok (header, data) {
       "author": `"${user_nickname}"`,
       "author_full": `"${user_fullname}"`,
       "author_followers": authStats,
-      "author_likes": row['data']["authorStats"]["diggCount"],
-      "author_videos": row['data']["authorStats"]["videoCount"],
+      "author_likes": likes,
+      "author_videos": videos,
       "author_avatar": row['data']['author']["avatarThumb"],
       "body": `"${escapeHTML(row['data']["desc"])}"`,
       "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
