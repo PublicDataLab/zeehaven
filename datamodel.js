@@ -65,7 +65,11 @@ function parseTwitter (header, data) {
             "images": (photos.length > 0) ? photos.join(";") : "",
             "videos": (videos.length > 0) ? videos.join(";") : "",
             "mentions": (mentions.length > 0) ? mentions.join(";") : "",
-            "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : ""}
+            "long_lat": (row["data"]["legacy"]["place"]) ? row['data']["legacy"]["place"]["bounding_box"]["coordinates"]:"",
+            "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
+            "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : ""
+          }
+          console.log(row["data"]["core"]["user_results"]["result"]["legacy"]["location"])
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } );
@@ -298,7 +302,7 @@ function parseTiktok (header, data) {
       "author_likes": row['data']["authorStats"]["diggCount"],
       "author_videos": row['data']["authorStats"]["videoCount"],
       "author_avatar": row['data']['author']["avatarThumb"],
-      "body": `"${row['data']["desc"]}"`,
+      "body": `"${escapeHTML(row['data']["desc"])}"`,
       "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
       "unix_timestamp": row['data']["createTime"],
       "is_duet":  (row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
