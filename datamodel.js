@@ -69,7 +69,6 @@ function parseTwitter (header, data) {
             "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
             "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : ""
           }
-          console.log(row["data"]["core"]["user_results"]["result"]["legacy"]["location"])
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } );
@@ -243,7 +242,7 @@ function parseTiktok (header, data) {
     
     if (typeof(row['data']['author']) == Object) {
       const _u = JSON.parse(row['data']['author'])
-      console.log(_u)
+
       user_nickname = row['data']["author"]["uniqueId"]
       user_fullname = row['data']["author"]["nickname"]
       user_id = row['data']["author"]["id"]
@@ -305,7 +304,7 @@ function parseTiktok (header, data) {
       "body": `"${escapeHTML(row['data']["desc"])}"`,
       "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
       "unix_timestamp": row['data']["createTime"],
-      "is_duet":  (row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
+      "is_duet":  (row['data']["duetInfo"] && row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
       "is_ad": (row['data']["isAd"] == "yes")? "yes" : "no",
       "music_name": `"${row['data']["music"]["title"]}"`,
       "music_id": row['data']["music"]["id"],
@@ -319,11 +318,11 @@ function parseTiktok (header, data) {
       "comments": row['data']["stats"]["commentCount"],
       "shares": row['data']["stats"]["shareCount"],
       "plays": row['data']["stats"]["playCount"],
-      "hashtags": `"${hashtags.join(',')}"`,
-      "challenges": `"${challenges.join(',')}"`,
+      "hashtags": `"${escapeHTML(hashtags.join(','))}"`,
+      "challenges": `"${escapeHTML(challenges.join(','))}"`,
       "diversification_labels": `"${labels}"`,
       "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
-      "stickers": `"${stickers.join(',')}"`,
+      "stickers": `"${escapeHTML(stickers.join(','))}"`,
       "effects": `"${effects.join(',')}"`,
       "warning": `"${warnings.join(',')}"`
   }
@@ -354,7 +353,7 @@ function parseAll (header, result) {
 			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
 		        })
             ].join('\r\n')
-            console.log(_csv);
+
     return _csv;
 }
 
@@ -380,7 +379,7 @@ function parse_qs (urlArray){
     let _url = urlArray.split("?")[1];
     const splitq = _url.split('=')
     q[splitq[0]] = splitq[1]
-  } else {
+  } else if (urlArray != undefined) {
     urlArray.forEach(function (url) {
       if (url != "") {
         let _url = url.split("?")[1];
