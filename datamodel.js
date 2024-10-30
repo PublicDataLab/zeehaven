@@ -294,7 +294,7 @@ function parseTiktok (header, data) {
     }
 
     authStats = 0;
-    if (!'authorStats' in row['data'] || row['data']["authorStats"] != undefined) {
+    if ('authorStats' in row['data'] && row['data']["authorStats"] != undefined) {
       authStats = row['data']["authorStats"]["followerCount"];
     }
 
