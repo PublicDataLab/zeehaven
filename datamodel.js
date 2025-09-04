@@ -97,9 +97,10 @@ function parseInstagram (header, data) {
       let dt = new Date(row["data"]["taken_at"]*1000);
 
       const caption = (row['data']["caption"] != null) ? escapeHTML(row['data']["caption"]["text"]):"";
-      let num_comments = -1;
-      if (row['data']['comment_counts']) {
-        num_comments = row['data']['comment_counts']
+      let num_comments = 0;
+      //row['data']['comment_count']
+      if (row['data']['comment_count']) {
+        num_comments = row['data']['comment_count']
       } else if (row['data']['comments'] && (typeof row['data']['comments'] == 'list')) {
         num_comments = row['data']['comments'].length();
       }
