@@ -30,7 +30,7 @@ function parseTwitter (header, data) {
 		      if (row["data"]["legacy"]["entities"]["media"]) {
 			      row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
 			        if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
-				      if (img["type"] == "video") { videos.push(img["media_url_https"]) }
+				      if (img["type"] == "video") { videos.push(img["media_url_hxttps"]) }
 			      });
 		      }
           let tags = []
@@ -43,8 +43,8 @@ function parseTwitter (header, data) {
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
 	          "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
-            "author": `"${row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"]}"`,
-            "author_fullname": `"${row["data"]["core"]["user_results"]["result"]["legacy"]["name"]}"`,
+            "author": `"${row["data"]["core"]["user_results"]["result"]["core"]["screen_name"]}"`,
+            "author_fullname": `"${row["data"]["core"]["user_results"]["result"]["core"]["name"]}"`,
             "author_id": row["data"]["legacy"]["user_id_str"],
             "source": row["source"],
             "language_guess": row["data"]["legacy"]["lang"],
