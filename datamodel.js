@@ -68,7 +68,7 @@ function parseTwitter (header, data) {
             "long_lat": (row["data"]["legacy"]["place"]) ? row['data']["legacy"]["place"]["bounding_box"]["coordinates"]:"",
             "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
             "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : "",
-            "verified": row["data"]["core"]["result"]["is_blue_verified"]
+            "verified": row["data"]["core"]["user_results"]["result"]["is_blue_verified"]
           }
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
@@ -195,21 +195,10 @@ function parseInstagram (header, data) {
 
         return csv;
 }
-/** Need to parse graphs
- * function parseInstagramGraph (header, data)
- * type_map = {"GraphSidecar": "photo", "GraphVideo": "video"}
-      if (row['data']["__typename"] != "GraphSidecar") {
-        media_type = type_map.get(row['data']["__typename"], "unknown")
-      } else {
-        media_types = set()
-        row['data']["edge_sidecar_to_children"]["edges"].forEach(x => media_types.push(x["node"]["__typename"]))
-        media_type = (len(media_types) > 1) ? "mixed" : type_map.get(media_types.pop(), "unknown");
-      }
- */
 
-      /**
-       * Parse Zeeschuimer Tiktok to the 4cat model
-       */
+/**
+* Parse Zeeschuimer Tiktok to the 4cat model
+*/
 function parseTiktok (header, data) {
   let lines = [];
   flatten(data[0], header)
@@ -336,7 +325,8 @@ function parseTiktok (header, data) {
       "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
       "stickers": `"${escapeHTML(stickers.join(','))}"`,
       "effects": `"${effects.join(',')}"`,
-      "warning": `"${warnings.join(',')}"`
+      "warning": `"${warnings.join(',')}"`,
+      "verified": row['data']['author']['verified']
   }
     lines.push(Object.values(rows).join(','))
     if (header.length == 0) { header = Object.keys(rows);}
@@ -404,3 +394,8 @@ function parse_qs (urlArray){
   }
   return q;
  };
+
+ function capitaliseWord (w) {
+  const word = w.toString();
+  return word[0].toUpperCase() + word.substr(1)
+ }
