@@ -178,7 +178,8 @@ function parseInstagram (header, data) {
             "location_name": `"${location["name"]}"`,
             "location_latlong": `"${location["latlong"]}"`,
             "location_city": `"${location["city"]}"`,
-            "unix_timestamp": row['data']["taken_at"]
+            "unix_timestamp": row['data']["taken_at"], 
+            "verified": row['data']['user']['is_verified']
           }
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
