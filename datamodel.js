@@ -67,7 +67,8 @@ function parseTwitter (header, data) {
             "mentions": (mentions.length > 0) ? mentions.join(";") : "",
             "long_lat": (row["data"]["legacy"]["place"]) ? row['data']["legacy"]["place"]["bounding_box"]["coordinates"]:"",
             "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
-            "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : ""
+            "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : "",
+            "verified": row["data"]["core"]["result"]["is_blue_verified"]
           }
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
