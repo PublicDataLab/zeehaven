@@ -15,8 +15,8 @@
   
         for (var i = 0; i < files.length; i++) {
             reader = new FileReader();
-            const fname = files[i].name.split('-');
             const _date = new Date();
+            const fname = files[i].name.split('-');
             const filename = [fname[0], fname[1], fname[2], _date.toISOString() + ".csv"].join('-');
             reader.onload = function (event) {
            
