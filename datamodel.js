@@ -27,22 +27,20 @@ function parseTwitter (header, data) {
 	        }
 		      let videos = [];
 		      let photos = [];
+          let extended = [];
 		      if (row["data"]["legacy"]["entities"]["media"]) {
 			      row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
 			        if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
-				      if (img["type"] == "video") { videos.push(img["media_url_hxttps"]) }
+				      else if (img["type"] == "video") { videos.push(img["media_url_https"]) }
+              extended.push(img['expanded_url']);
 			      });
 		      }
+
           let tags = []
           if (row["data"]["legacy"]["entities"]["hashtags"]) {
             row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
           }
-          let extended = [];
-          if (row["data"]["legacy"]["entities"]["media"]) {
-            row["data"]["legacy"]["entities"]["media"].forEach(x => extended.push(x['expanded_url']))
-          }
-          console.log(row["data"]["legacy"]["entities"]["media"]["expanded_url"]);
-          console.log(extended);
+
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
