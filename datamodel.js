@@ -37,6 +37,12 @@ function parseTwitter (header, data) {
           if (row["data"]["legacy"]["entities"]["hashtags"]) {
             row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
           }
+          let extended = [];
+          if (row["data"]["legacy"]["entities"]["media"]) {
+            row["data"]["legacy"]["entities"]["media"].forEach(x => extended.push(x['expanded_url']))
+          }
+          console.log(row["data"]["legacy"]["entities"]["media"]["expanded_url"]);
+          console.log(extended);
           const rows = {"id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
@@ -61,7 +67,8 @@ function parseTwitter (header, data) {
             "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
             "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
             "hashtags": (tags.length > 0) ? tags.join(";") : "",
-            "urls": (row["data"]["legacy"]["entities"]["urls"]["expanded_url"]) ? row["data"]["legacy"]["entities"]["urls"]["expanded_url"].join(';').toString():"",
+            "urls": (extended.length > 0) ? extended.join(";") : "",
+            //"urls": (row["data"]["legacy"]["extended_entities"]["media"]["expanded_url"]) ? row["data"]["legacy"]["extended_entities"]["media"]["expanded_url"].join(';').toString():"",
             "images": (photos.length > 0) ? photos.join(";") : "",
             "videos": (videos.length > 0) ? videos.join(";") : "",
             "mentions": (mentions.length > 0) ? mentions.join(";") : "",
