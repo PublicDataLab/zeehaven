@@ -45,7 +45,7 @@ function parseTwitter (header, data) {
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
-            "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['legacy']['screen_name']+"/status/"+row['id'],
+            "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['core']['screen_name']+"/status/"+row['id'],
 	          "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
             "author": `"${row["data"]["core"]["user_results"]["result"]["core"]["screen_name"]}"`,
             "author_fullname": `"${row["data"]["core"]["user_results"]["result"]["core"]["name"]}"`,
