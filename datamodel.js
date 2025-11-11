@@ -117,7 +117,7 @@ function parseInstagram (header, data) {
       let media_url = "";
       let display_url = "";
 
-      let num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
+      const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
       let media_type = "unknown";
       try {
       
@@ -145,6 +145,7 @@ function parseInstagram (header, data) {
         media_url = row["data"]["image_versions2"]["candidates"][0]["url"]
         display_url = media_url;
       }
+      console.log(row['data']["media_type"]);
  
       let location = {"name": "", "latlong": "", "city": ""}
 
@@ -163,29 +164,46 @@ function parseInstagram (header, data) {
         if (t[0].charAt(0) == "#") tags.push(t[0]); 
       });
 
+      let usertags = [];
+      //row['data']["edge_media_to_tagged_user"]["edges"].forEach(x => usertags.append(x["node"]["user"]["username"]) );
+            
+
       const rows = {
             "id": _id,
+            "post_source_domain": row["__import_meta"], //get source_platform_url
             "thread_id": _id,
             "parent_id": _id,
-            "body" : `"${caption}"`, 
-            "author": `"${row['data']["owner"]["username"]}"`,
-            "timestamp": dt.getFullYear() + "-" + (dt.getMonth()  + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
-            "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:"",
-            "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
-            "type": media_type,
             "url": "https://www.instagram.com/p/" + _id,
-            "image_url": display_url,
-            "media_url": media_url,
+            "body" : `"${caption}"`,
+            "author": `"${row['data']["owner"]["username"]}"`,
+            "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:"",
+            "is_verified": (row['data']['is_verified']) ? true : false,
+            "timestamp": dt.getFullYear() + "-" + (dt.getMonth()  + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
+            "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
+            "coauthors": "", 
+            "coauthors_fullname": "",
+            "coauthors_ids": "",
+
+            "media_type": media_type,
+            "num_media": num_media,
+            "image_urls": display_url,
+            "media_urls": media_url,
+
             "hashtags": (tags.length > 0) ? `"${tags.join()}"` : "",
+            "usertags": usertags,
+            "likes_hidden": (row["like_and_view_counts_disabled"]) ? true : false,
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
-            "num_media": num_media,
+            
             "location_name": `"${location["name"]}"`,
+            "location_id" : `"${location["id"]}"`,
             "location_latlong": `"${location["latlong"]}"`,
-            "location_city": `"${location["city"]}"`,
+            "location_city": (location['city'] === undefined || location['city'] == "") ? "" : `"${location["city"]}"`,
+            
             "unix_timestamp": row['data']["taken_at"], 
-            "verified": row['data']['user']['is_verified']
+            "missing_media": ""
           }
+
           lines.push(Object.values(rows).join(','))
           if (header.length == 0) { header = Object.keys(rows);}
         } catch (error) {
