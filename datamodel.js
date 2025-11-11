@@ -113,39 +113,48 @@ function parseInstagram (header, data) {
         /* get media url
         # for carousels, get the first media item, for videos, get the video
         # url, for photos, get the highest resolution */
-      let media_node = "";
-      let media_url = "";
-      let display_url = "";
+
+      let media_url = [];
+      let display_url = [];
+      let media_types = [];
 
       const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
       let media_type = "unknown";
       try {
       
-      const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"}
-      if (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL) {
-        media_type = (type_map[row['data']["media_type"]])?  type_map[row['data']["media_type"]]: "unknown";
-      } else {
-        let media_types = new Set();
-        if (row['data']["carousel_media"] != undefined) {
-          row['data']["carousel_media"].forEach(x => media_types.add(x));
-        }
-        if (media_types.size > 1) { media_type = "mixed" };
-      }
+        const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
 
-      if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) { 
-        media_node = row['data']["media_type"][0]
-      } else if (row['data']["media_type"] == MEDIA_TYPE_VIDEO) {
-        media_url = row['data']["video_versions"][0]["url"];
-        if (row["data"]["image_versions2"]) {
-          display_url = row["data"]["image_versions2"]["candidates"][0]["url"]
+        let media_nodes = [];
+        if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
+          media_nodes = row['data']['carousel_media']
         } else {
-          display_url = row['data']["video_versions"][0]["url"]
+          media_nodes.push(row)
         }
-      } else if (row['data']["media_type"] == MEDIA_TYPE_PHOTO) {
-        media_url = row["data"]["image_versions2"]["candidates"][0]["url"]
-        display_url = media_url;
-      }
-      console.log(row['data']["media_type"]);
+
+        media_nodes.forEach(mn => {
+
+          if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
+            media_url.push(mn["video_versions"][0]["url"]);
+
+            if (mn["image_versions2"]) {
+              display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
+            } else {
+              display_url.append(mn["video_versions"][0]["url"])
+            }
+          } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
+            const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
+
+            display_url.push(mediaurl);
+            media_url.push(mediaurl);
+          } else {
+            missing_media = "";
+          }
+
+          media_types.push(type_map[mn['media_type']] );
+        }); 
+
+        media_type = (media_types.size > 1) ? "mixed" : media_types.pop();
+
  
       let location = {"name": "", "latlong": "", "city": ""}
 
@@ -165,12 +174,16 @@ function parseInstagram (header, data) {
       });
 
       let usertags = [];
-      //row['data']["edge_media_to_tagged_user"]["edges"].forEach(x => usertags.append(x["node"]["user"]["username"]) );
-            
+
+      if (row["usertags"] != undefined) {
+        row["usertags"]["in"].forEach(user => {
+          usertags.push(user["user"]["username"] );
+        });
+      }
 
       const rows = {
             "id": _id,
-            "post_source_domain": row["__import_meta"], //get source_platform_url
+            "post_source_domain": row["source_platform_url"], //get source_platform_url
             "thread_id": _id,
             "parent_id": _id,
             "url": "https://www.instagram.com/p/" + _id,
@@ -186,11 +199,11 @@ function parseInstagram (header, data) {
 
             "media_type": media_type,
             "num_media": num_media,
-            "image_urls": display_url,
-            "media_urls": media_url,
+            "image_urls": (display_url.length > 0) ? `"${display_url.join(";")}"` : "",
+            "media_urls": (media_url.length > 0) ? `"${media_url.join(";")}"` : "",
 
-            "hashtags": (tags.length > 0) ? `"${tags.join()}"` : "",
-            "usertags": usertags,
+            "hashtags": (tags.length > 0) ? `"${tags.join(";")}"` : "",
+            "usertags": (usertags.length == 0) ? "" : usertags.join(";"),
             "likes_hidden": (row["like_and_view_counts_disabled"]) ? true : false,
             "num_likes": row["data"]["like_count"],
             "num_comments": num_comments,
