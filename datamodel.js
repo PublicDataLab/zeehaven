@@ -41,15 +41,20 @@ function parseTwitter (header, data) {
             row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
           }
 
-          const rows = {"id": row["data"]["rest_id"],
+          console.log(row["data"]["core"]["user_results"]["result"]["legacy"]["followers_count"]);
+
+          const rows = {
+            "id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['core']['screen_name']+"/status/"+row['id'],
-	          "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
+	          "subject" : "",
+            "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
             "author": `"${row["data"]["core"]["user_results"]["result"]["core"]["screen_name"]}"`,
             "author_fullname": `"${row["data"]["core"]["user_results"]["result"]["core"]["name"]}"`,
             "author_id": row["data"]["legacy"]["user_id_str"],
+            "author_followers" : row["data"]["core"]["user_results"]["result"]["legacy"]["followers_count"],
             "source": row["source"],
             "language_guess": row["data"]["legacy"]["lang"],
             "possibly_sensitive": (row["data"]["possibly_sensitive"])? "yes" : "no",
@@ -66,13 +71,11 @@ function parseTwitter (header, data) {
             "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
             "hashtags": (tags.length > 0) ? tags.join(";") : "",
             "urls": (extended.length > 0) ? extended.join(";") : "",
-            //"urls": (row["data"]["legacy"]["extended_entities"]["media"]["expanded_url"]) ? row["data"]["legacy"]["extended_entities"]["media"]["expanded_url"].join(';').toString():"",
             "images": (photos.length > 0) ? photos.join(";") : "",
             "videos": (videos.length > 0) ? videos.join(";") : "",
             "mentions": (mentions.length > 0) ? mentions.join(";") : "",
-            "long_lat": (row["data"]["legacy"]["place"]) ? row['data']["legacy"]["place"]["bounding_box"]["coordinates"]:"",
+            "long_lat": (row["data"]["legacy"]["place"]) ? `"${row['data']["legacy"]["place"]["bounding_box"]["coordinates"]}"`:"",
             "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
-            "location": (row["data"]["core"]["user_results"]["result"]["legacy"]["location"])? `"${row["data"]["core"]["user_results"]["result"]["legacy"]["location"]}"` : "",
             "verified": row["data"]["core"]["user_results"]["result"]["is_blue_verified"]
           }
           lines.push(Object.values(rows).join(','))
