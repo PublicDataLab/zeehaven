@@ -63,7 +63,7 @@ function parseTwitter (header, data) {
           const rows = {
             "id": row["data"]["rest_id"],
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
-            "timestamp": dt.getFullYear() + "-" + dt.getMonth() + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
+            "timestamp": dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
             "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['core']['screen_name']+"/status/"+row['id'],
 	          "subject" : "",
