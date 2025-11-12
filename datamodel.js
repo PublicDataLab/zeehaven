@@ -25,14 +25,33 @@ function parseTwitter (header, data) {
 	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
 		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
 	        }
+
+          //media
 		      let videos = [];
 		      let photos = [];
           let extended = [];
-		      if (row["data"]["legacy"]["entities"]["media"]) {
-			      row["data"]["legacy"]["entities"]["media"].forEach(function(img) {
-			        if (img["type"] == "photo") { photos.push(img["media_url_https"]) }
-				      else if (img["type"] == "video") { videos.push(img["media_url_https"]) }
-              extended.push(img['expanded_url']);
+
+		      if (row["data"]["legacy"]["extended_entities"] != undefined) {
+			      row["data"]["legacy"]["extended_entities"]["media"].forEach(media => {
+			        if (media["type"] == "photo") { photos.push(media["media_url_https"]) }
+				      else if (media["type"] == "video") { 
+                photos.push(media["media_url_https"]) 
+                if (media['video_info']['variants']) {
+                  let video_variants = []
+                  media['video_info']['variants'].forEach(video => {
+                    
+                    if (video['content_type'].toString().startsWith('video/')) {
+                      video_variants.push(video);
+                    }
+                  });
+
+                  if (video_variants.length > 0) {
+                    video_variants.sort((a, b) => a.bitrate - b.bitrate);
+                    videos.push(video_variants[0]['url'])
+                  }
+                }
+              }
+              extended.push(media['expanded_url']);
 			      });
 		      }
 
@@ -40,8 +59,6 @@ function parseTwitter (header, data) {
           if (row["data"]["legacy"]["entities"]["hashtags"]) {
             row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
           }
-
-          console.log(row["data"]["core"]["user_results"]["result"]["legacy"]["followers_count"]);
 
           const rows = {
             "id": row["data"]["rest_id"],
@@ -379,6 +396,29 @@ function parseTiktok (header, data) {
 
   return csv;
 
+}
+
+/**
+* Parse LinkedIn to the 4cat model
+*/
+function parseLinkedIn (header, data) {
+
+  let lines = [];
+    flatten(data[0], header)
+    data.forEach(function(row) {
+      const rows = {
+
+      }
+    lines.push(Object.values(rows).join(','))
+      if (header.length == 0) { header = Object.keys(rows);}
+    });
+
+    const csv = [
+      header.join(','), // header row first
+      lines.join('\n')
+    ].join('\n');
+
+    return csv;
 }
 /**
  * Parse all data. We will not look for certain columns. 
