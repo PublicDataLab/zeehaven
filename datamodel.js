@@ -10,6 +10,7 @@ function parseTwitter (header, data) {
       const user_key = (row["data"]["core"]["user_results"]["result"]["core"] != undefined) ? "core":"legacy";
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
+
           const retweet = row["data"]["legacy"]["retweeted"]
           if (retweet) { 
             retweet["result"] = retweet["result"]["tweet"] 
@@ -18,10 +19,34 @@ function parseTwitter (header, data) {
             row['data']["legacy"]["full_text"] = escapeHTML(rt_text);
           }
 
-          const quote_tweet = row['data']["is_quote_status"];
+          let quoteauthor = ""
+          let quotewithheld = false;
+          let quotebody = ""
+
+          let quoteimages = []
+          let quotevideos = []
+
+          const quote_tweet = row['data']["quoted_status_result"];
           if (quote_tweet) {
             console.log(quote_tweet);
+            if ('tombstone' in quote_tweet['result']) { quotewithheld = true }
+            console.log(quotewithheld);
+            if (!quotewithheld) {
+              console.log(quote_tweet['result']['legacy']);
+              quoteauthor = quote_tweet['result']['core']['user_results']['result']['core']['screen_name'];
+              quotebody = quote_tweet['result']['legacy']['full_text'];
+              if (quote_tweet['result']['legacy']['entities']['media'] != undefined) {
+                quote_tweet['result']['legacy']['entities']['media'].forEach(media => {
+                if (media['type'] == "photo") {
+                    quoteimages.push(media["media_url_https"])
+                  } else if (media['type'] == "video") {
+                    quotevideos.push(media["media_url_https"])
+                  }
+                })
+              }
+            }
           }
+
 
 		
           let mentions = [];
@@ -87,6 +112,10 @@ function parseTwitter (header, data) {
             "retweeted_user": (retweet) ? row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_quote_tweet": (quote_tweet)? "yes": "no",
             "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
+            "quote_author": quoteauthor,
+            "quote_body": `"${escapeHTML(quotebody)}"`,
+            "quote_images": (quoteimages.length > 0) ? quoteimages.join(';'): "",
+            "quote_videos": (quotevideos.length > 0) ? quotevideos.join(';'): "",
             "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
             "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
             "hashtags": (tags.length > 0) ? tags.join(";") : "",
