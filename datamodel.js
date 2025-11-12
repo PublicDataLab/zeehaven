@@ -3,15 +3,18 @@
  */
 function parseTwitter (header, data) {
   let lines = [];
+
   flatten(data[0], header)
     data.forEach(function (row) { 
+
+      const user_key = (row["data"]["core"]["user_results"]["result"]["core"] != undefined) ? "core":"legacy";
           const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
           const dt = new Date(row["data"]["legacy"]["created_at"]);
           const retweet = row["data"]["legacy"]["retweeted"]
           if (retweet) { 
             retweet["result"] = retweet["result"]["tweet"] 
-            const rt_text = "RT @" + row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"] +
-                     ": " + row["data"]["result"]["legacy"]["full_text"]
+            const rt_text = "RT @" + row["data"]["core"]["user_results"]["result"][user_key]["screen_name"] +
+                     ": " + row["data"]["legacy"]["full_text"]
             row['data']["legacy"]["full_text"] = escapeHTML(rt_text);
           }
 
@@ -65,7 +68,7 @@ function parseTwitter (header, data) {
             "thread_id": row["data"]["legacy"]["conversation_id_str"],
             "timestamp": dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
             "unix_timestamp": timestamp,
-            "link": "https://twitter.com/"+row["data"]['core']['user_results']['result']['core']['screen_name']+"/status/"+row['id'],
+            "link": "https://x.com/"+row["data"]['core']['user_results']['result'][user_key]['screen_name']+"/status/"+ row["data"]["rest_id"],
 	          "subject" : "",
             "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
             "author": `"${row["data"]["core"]["user_results"]["result"]["core"]["screen_name"]}"`,
@@ -81,7 +84,7 @@ function parseTwitter (header, data) {
             "quote_count": row["data"]["legacy"]["quote_count"],
             "impression_count": row["data"]["views"]["count"],
             "is_retweet": (retweet)? "yes": "no",
-            "retweeted_user": (retweet) ? row["data"]["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
+            "retweeted_user": (retweet) ? row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_quote_tweet": (quote_tweet)? "yes": "no",
             "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
             "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
