@@ -7,136 +7,156 @@ function parseTwitter (header, data) {
   flatten(data[0], header)
     data.forEach(function (row) { 
 
-      const user_key = (row["data"]["core"]["user_results"]["result"]["core"] != undefined) ? "core":"legacy";
-          const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
-          const dt = new Date(row["data"]["legacy"]["created_at"]);
+      // Safe nested property access
+      const safeGet = (obj, path) => {
+        return path.split('.').reduce((current, prop) => current?.[prop], obj);
+      };
 
-          const retweet = row["data"]["legacy"]["retweeted"]
-          if (retweet) { 
-            retweet["result"] = retweet["result"]["tweet"] 
-            const rt_text = "RT @" + row["data"]["core"]["user_results"]["result"][user_key]["screen_name"] +
-                     ": " + row["data"]["legacy"]["full_text"]
-            row['data']["legacy"]["full_text"] = escapeHTML(rt_text);
-          }
+      const user_key = (safeGet(row, "data.core.user_results.result.core") != undefined) ? "core":"legacy";
+      
+      try {
+        const timestamp = Date.parse(row["data"]["legacy"]["created_at"]);
+        const dt = new Date(row["data"]["legacy"]["created_at"]);
 
-          let quoteauthor = ""
-          let quotewithheld = false;
-          let quotebody = ""
+        const retweet = row["data"]["legacy"]["retweeted"]
+        if (retweet) { 
+          retweet["result"] = retweet["result"]["tweet"] 
+          const rt_text = "RT @" + row["data"]["core"]["user_results"]["result"][user_key]["screen_name"] +
+                   ": " + row["data"]["legacy"]["full_text"]
+          row['data']["legacy"]["full_text"] = escapeHTML(rt_text);
+        }
 
-          let quoteimages = []
-          let quotevideos = []
+        let quoteauthor = ""
+        let quotewithheld = false;
+        let quotebody = ""
 
-          const quote_tweet = row['data']["quoted_status_result"];
-          if (quote_tweet) {
-            console.log(quote_tweet);
-            if ('tombstone' in quote_tweet['result']) { quotewithheld = true }
-            console.log(quotewithheld);
-            if (!quotewithheld) {
-              console.log(quote_tweet['result']['legacy']);
+        let quoteimages = []
+        let quotevideos = []
+
+        const quote_tweet = row['data']["quoted_status_result"];
+        if (quote_tweet && quote_tweet['result']) {
+          console.log(quote_tweet);
+          if ('tombstone' in quote_tweet['result']) { quotewithheld = true }
+          console.log(quotewithheld);
+          if (!quotewithheld && quote_tweet['result']['legacy']) {
+            console.log(quote_tweet['result']['legacy']);
+            if (quote_tweet['result']['core'] && quote_tweet['result']['core']['user_results']) {
               quoteauthor = quote_tweet['result']['core']['user_results']['result']['core']['screen_name'];
-              quotebody = quote_tweet['result']['legacy']['full_text'];
-              if (quote_tweet['result']['legacy']['entities']['media'] != undefined) {
-                quote_tweet['result']['legacy']['entities']['media'].forEach(media => {
-                if (media['type'] == "photo") {
-                    quoteimages.push(media["media_url_https"])
-                  } else if (media['type'] == "video") {
-                    quotevideos.push(media["media_url_https"])
-                  }
-                })
-              }
+            }
+            quotebody = quote_tweet['result']['legacy']['full_text'];
+            if (quote_tweet['result']['legacy'] && quote_tweet['result']['legacy']['entities'] && quote_tweet['result']['legacy']['entities']['media'] != undefined) {
+              quote_tweet['result']['legacy']['entities']['media'].forEach(media => {
+              if (media['type'] == "photo") {
+                  quoteimages.push(media["media_url_https"])
+                } else if (media['type'] == "video") {
+                  quotevideos.push(media["media_url_https"])
+                }
+              })
             }
           }
+        }
 
 
-		
-          let mentions = [];
-	        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
-		        row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
-	        }
 
-          //media
-		      let videos = [];
-		      let photos = [];
-          let extended = [];
+        
+        let mentions = [];
+        if (row["data"]["legacy"]["entities"]["user_mentions"]) {
+          row["data"]["legacy"]["entities"]["user_mentions"].forEach(m => mentions.push(m["screen_name"]))
+        }
 
-		      if (row["data"]["legacy"]["extended_entities"] != undefined) {
-			      row["data"]["legacy"]["extended_entities"]["media"].forEach(media => {
-			        if (media["type"] == "photo") { photos.push(media["media_url_https"]) }
-				      else if (media["type"] == "video") { 
-                photos.push(media["media_url_https"]) 
-                if (media['video_info']['variants']) {
-                  let video_variants = []
-                  media['video_info']['variants'].forEach(video => {
-                    
-                    if (video['content_type'].toString().startsWith('video/')) {
-                      video_variants.push(video);
-                    }
-                  });
+        //media
+        let videos = [];
+        let photos = [];
+        let extended = [];
 
-                  if (video_variants.length > 0) {
-                    video_variants.sort((a, b) => a.bitrate - b.bitrate);
-                    videos.push(video_variants[0]['url'])
+        if (row["data"]["legacy"]["extended_entities"] != undefined) {
+          row["data"]["legacy"]["extended_entities"]["media"].forEach(media => {
+            if (media["type"] == "photo") { photos.push(media["media_url_https"]) }
+            else if (media["type"] == "video") { 
+              photos.push(media["media_url_https"]) 
+              if (media['video_info']['variants']) {
+                let video_variants = []
+                media['video_info']['variants'].forEach(video => {
+                  
+                  if (video['content_type'].toString().startsWith('video/')) {
+                    video_variants.push(video);
                   }
+                });
+
+                if (video_variants.length > 0) {
+                  video_variants.sort((a, b) => a.bitrate - b.bitrate);
+                  videos.push(video_variants[0]['url'])
                 }
               }
-              extended.push(media['expanded_url']);
-			      });
-		      }
+            }
+            extended.push(media['expanded_url']);
+          });
+        }
 
-          let tags = []
-          if (row["data"]["legacy"]["entities"]["hashtags"]) {
-            row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
-          }
+        let tags = []
+        if (row["data"]["legacy"]["entities"]["hashtags"]) {
+          row["data"]["legacy"]["entities"]["hashtags"].forEach( t => tags.push(t.text))
+        }
 
-          const rows = {
-            "id": row["data"]["rest_id"],
-            "thread_id": row["data"]["legacy"]["conversation_id_str"],
-            "timestamp": dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
-            "unix_timestamp": timestamp,
-            "link": "https://x.com/"+row["data"]['core']['user_results']['result'][user_key]['screen_name']+"/status/"+ row["data"]["rest_id"],
-	          "subject" : "",
-            "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
-            "author": `"${row["data"]["core"]["user_results"]["result"]["core"]["screen_name"]}"`,
-            "author_fullname": `"${row["data"]["core"]["user_results"]["result"]["core"]["name"]}"`,
-            "author_id": row["data"]["legacy"]["user_id_str"],
-            "author_followers" : row["data"]["core"]["user_results"]["result"]["legacy"]["followers_count"],
-            "source": row["source"],
-            "language_guess": row["data"]["legacy"]["lang"],
-            "possibly_sensitive": (row["data"]["possibly_sensitive"])? "yes" : "no",
-            "retweet_count": row["data"]["legacy"]["retweet_count"],
-            "reply_count": row["data"]["legacy"]["reply_count"],
-            "like_count": row["data"]["legacy"]["favorite_count"],
-            "quote_count": row["data"]["legacy"]["quote_count"],
-            "impression_count": row["data"]["views"]["count"],
-            "is_retweet": (retweet)? "yes": "no",
-            "retweeted_user": (retweet) ? row["data"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
-            "is_quote_tweet": (quote_tweet)? "yes": "no",
-            "quoted_user": (quote_tweet) ? quote_tweet["result"]["core"]["user_results"]["result"]["legacy"]["screen_name"]: "",
-            "quote_author": quoteauthor,
-            "quote_body": `"${escapeHTML(quotebody)}"`,
-            "quote_images": (quoteimages.length > 0) ? quoteimages.join(';'): "",
-            "quote_videos": (quotevideos.length > 0) ? quotevideos.join(';'): "",
-            "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
-            "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
-            "hashtags": (tags.length > 0) ? tags.join(";") : "",
-            "urls": (extended.length > 0) ? extended.join(";") : "",
-            "images": (photos.length > 0) ? photos.join(";") : "",
-            "videos": (videos.length > 0) ? videos.join(";") : "",
-            "mentions": (mentions.length > 0) ? mentions.join(";") : "",
-            "long_lat": (row["data"]["legacy"]["place"]) ? `"${row['data']["legacy"]["place"]["bounding_box"]["coordinates"]}"`:"",
-            "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
-            "verified": row["data"]["core"]["user_results"]["result"]["is_blue_verified"]
-          }
-          lines.push(Object.values(rows).join(','))
-          if (header.length == 0) { header = Object.keys(rows);}
-        } );
+        const core_user = safeGet(row, "data.core.user_results.result.core");
+        const legacy_user = safeGet(row, "data.core.user_results.result.legacy");
+        const author_screen_name = core_user?.screen_name || legacy_user?.screen_name || "unknown";
+        const author_name = core_user?.name || legacy_user?.name || "unknown";
+        const followers = legacy_user?.followers_count || 0;
+        const is_verified = safeGet(row, "data.core.user_results.result.is_blue_verified") || false;
 
-        const csv = [
-          header.join(','), // header row first
-          lines.join('\n')
-        ].join('\n');
+        const rows = {
+          "id": row["data"]["rest_id"],
+          "thread_id": row["data"]["legacy"]["conversation_id_str"],
+          "timestamp": dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
+          "unix_timestamp": timestamp,
+          "link": "https://x.com/"+author_screen_name+"/status/"+ row["data"]["rest_id"],
+          "subject" : "",
+          "body": `"${escapeHTML(row["data"]["legacy"]["full_text"])}"`,
+          "author": `"${author_screen_name}"`,
+          "author_fullname": `"${author_name}"`,
+          "author_id": row["data"]["legacy"]["user_id_str"],
+          "author_followers" : followers,
+          "source": row["source"],
+          "language_guess": row["data"]["legacy"]["lang"],
+          "possibly_sensitive": (row["data"]["possibly_sensitive"])? "yes" : "no",
+          "retweet_count": row["data"]["legacy"]["retweet_count"],
+          "reply_count": row["data"]["legacy"]["reply_count"],
+          "like_count": row["data"]["legacy"]["favorite_count"],
+          "quote_count": row["data"]["legacy"]["quote_count"],
+          "impression_count": row["data"]["views"] ? row["data"]["views"]["count"] : 0,
+          "is_retweet": (retweet)? "yes": "no",
+          "retweeted_user": (retweet && legacy_user) ? legacy_user["screen_name"]: "",
+          "is_quote_tweet": (quote_tweet)? "yes": "no",
+          "quoted_user": (quote_tweet && quote_tweet["result"] && quote_tweet["result"]["legacy"] && quote_tweet["result"]["legacy"]["screen_name"]) ? quote_tweet["result"]["legacy"]["screen_name"]: "",
+          "quote_author": quoteauthor,
+          "quote_body": `"${escapeHTML(quotebody)}"`,
+          "quote_images": (quoteimages.length > 0) ? quoteimages.join(';'): "",
+          "quote_videos": (quotevideos.length > 0) ? quotevideos.join(';'): "",
+          "is_reply": (row["data"]["legacy"]["conversation_id_str"].toString()  != row["data"]["rest_id"].toString()) ? "yes" : "no",
+          "replied_user": (row["data"]["legacy"]["in_reply_to_screen_name"])? row["data"]["legacy"]["in_reply_to_screen_name"]: "",
+          "hashtags": (tags.length > 0) ? tags.join(";") : "",
+          "urls": (extended.length > 0) ? extended.join(";") : "",
+          "images": (photos.length > 0) ? photos.join(";") : "",
+          "videos": (videos.length > 0) ? videos.join(";") : "",
+          "mentions": (mentions.length > 0) ? mentions.join(";") : "",
+          "long_lat": (row["data"]["legacy"]["place"]) ? `"${row['data']["legacy"]["place"]["bounding_box"]["coordinates"]}"`:""  ,
+          "place_name": (row["data"]["legacy"]["place"])? row['data']["legacy"]["place"]["full_name"] : "", 
+          "verified": is_verified
+        }
+        lines.push(Object.values(rows).join(','))
+        if (header.length == 0) { header = Object.keys(rows);}
+      } catch(e) {
+        console.error("Error parsing row:", e, row);
+      }
+    } );
 
-        return csv;
+    const csv = [
+      header.join(','), // header row first
+      lines.join('\n')
+    ].join('\n');
+
+    return csv;
 }
 
 /**
@@ -150,131 +170,132 @@ function parseInstagram (header, data) {
 
   flatten(data[0], header);
   //let's create the regex once as const and call over each row
-  const re = /#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\,.\`~']+)/g;
+  const re = /#([^\s!@#$%ˆ&*()_+{}:\"|<>?\[\];'\\,.`~']+)/g;
     data.forEach(function (row) { 
-      let dt = new Date(row["data"]["taken_at"]*1000);
-
-      const caption = (row['data']["caption"] != null) ? escapeHTML(row['data']["caption"]["text"]):"";
-      let num_comments = 0;
-      //row['data']['comment_count']
-      if (row['data']['comment_count']) {
-        num_comments = row['data']['comment_count']
-      } else if (row['data']['comments'] && (typeof row['data']['comments'] == 'list')) {
-        num_comments = row['data']['comments'].length();
-      }
-        /* get media url
-        # for carousels, get the first media item, for videos, get the video
-        # url, for photos, get the highest resolution */
-
-      let media_url = [];
-      let display_url = [];
-      let media_types = [];
-
-      const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
-      let media_type = "unknown";
       try {
-      
-        const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
+        let dt = new Date(row["data"]["taken_at"]*1000);
 
-        let media_nodes = [];
-        if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
-          media_nodes = row['data']['carousel_media']
-        } else {
-          media_nodes.push(row)
+        const caption = (row['data']["caption"] != null) ? escapeHTML(row['data']["caption"]["text"]):"";
+        let num_comments = 0;
+        //row['data']['comment_count']
+        if (row['data']['comment_count']) {
+          num_comments = row['data']['comment_count']
+        } else if (row['data']['comments'] && (typeof row['data']['comments'] == 'list')) {
+          num_comments = row['data']['comments'].length();
         }
+          /* get media url
+          # for carousels, get the first media item, for videos, get the video
+          # url, for photos, get the highest resolution */
 
-        media_nodes.forEach(mn => {
+        let media_url = [];
+        let display_url = [];
+        let media_types = [];
 
-          if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
-            media_url.push(mn["video_versions"][0]["url"]);
+        const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
+        let media_type = "unknown";
+        
+          const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
 
-            if (mn["image_versions2"]) {
-              display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
-            } else {
-              display_url.append(mn["video_versions"][0]["url"])
-            }
-          } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
-            const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
-
-            display_url.push(mediaurl);
-            media_url.push(mediaurl);
+          let media_nodes = [];
+          if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
+            media_nodes = row['data']['carousel_media']
           } else {
-            missing_media = "";
+            media_nodes.push(row)
           }
 
-          media_types.push(type_map[mn['media_type']] );
-        }); 
+          media_nodes.forEach(mn => {
 
-        media_type = (media_types.size > 1) ? "mixed" : media_types.pop();
+            if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
+              if (mn["video_versions"] && mn["video_versions"][0]) {
+                media_url.push(mn["video_versions"][0]["url"]);
+              }
 
- 
-      let location = {"name": "", "latlong": "", "city": ""}
+              if (mn["image_versions2"]) {
+                display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
+              } else if (mn["video_versions"] && mn["video_versions"][0]) {
+                display_url.push(mn["video_versions"][0]["url"])
+              }
+            } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
+              const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
 
-      if (row['data']["location"]) {
-        location["name"] = row['data']["location"]["name"].toString();
-        // Leaving this though it does not appear to be used in this type; maybe we'll be surprised in the future...
-        location["latlong"] = (row['data']["location"]["lat"]) ? row['data']["location"]["lat"] + "," + row['data']["location"]["lng"] : "";
-        location["city"] = row['data']["location"]["city"]
-      }
-      const _id = row['data']["code"];
+              display_url.push(mediaurl);
+              media_url.push(mediaurl);
+            } else {
+              missing_media = "";
+            }
 
-      let tags = [];
-      [...caption.matchAll(re)].forEach(function(_tag){ 
-        //getting both bash and no-hash. Remove the latter. 
-        const t = _tag.toString().split(',')
-        if (t[0].charAt(0) == "#") tags.push(t[0]); 
-      });
+            media_types.push(type_map[mn['media_type']] );
+          }); 
 
-      let usertags = [];
+          media_type = (media_types.length > 1) ? "mixed" : (media_types.length > 0 ? media_types.pop() : "unknown");
 
-      if (row["usertags"] != undefined) {
-        row["usertags"]["in"].forEach(user => {
-          usertags.push(user["user"]["username"] );
-        });
-      }
+   
+        let location = {"name": "", "latlong": "", "city": ""}
 
-      const rows = {
-            "id": _id,
-            "post_source_domain": row["source_platform_url"], //get source_platform_url
-            "thread_id": _id,
-            "parent_id": _id,
-            "url": "https://www.instagram.com/p/" + _id,
-            "body" : `"${caption}"`,
-            "author": `"${row['data']["owner"]["username"]}"`,
-            "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:"",
-            "is_verified": (row['data']['is_verified']) ? true : false,
-            "timestamp": dt.getFullYear() + "-" + (dt.getMonth()  + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
-            "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
-            "coauthors": "", 
-            "coauthors_fullname": "",
-            "coauthors_ids": "",
-
-            "media_type": media_type,
-            "num_media": num_media,
-            "image_urls": (display_url.length > 0) ? `"${display_url.join(";")}"` : "",
-            "media_urls": (media_url.length > 0) ? `"${media_url.join(";")}"` : "",
-
-            "hashtags": (tags.length > 0) ? `"${tags.join(";")}"` : "",
-            "usertags": (usertags.length == 0) ? "" : usertags.join(";"),
-            "likes_hidden": (row["like_and_view_counts_disabled"]) ? true : false,
-            "num_likes": row["data"]["like_count"],
-            "num_comments": num_comments,
-            
-            "location_name": `"${location["name"]}"`,
-            "location_id" : `"${location["id"]}"`,
-            "location_latlong": `"${location["latlong"]}"`,
-            "location_city": (location['city'] === undefined || location['city'] == "") ? "" : `"${location["city"]}"`,
-            
-            "unix_timestamp": row['data']["taken_at"], 
-            "missing_media": ""
-          }
-
-          lines.push(Object.values(rows).join(','))
-          if (header.length == 0) { header = Object.keys(rows);}
-        } catch (error) {
-          console.log(error)
+        if (row['data']["location"]) {
+          location["name"] = row['data']["location"]["name"].toString();
+          // Leaving this though it does not appear to be used in this type; maybe we'll be surprised in the future...
+          location["latlong"] = (row['data']["location"]["lat"]) ? row['data']["location"]["lat"] + "," + row['data']["location"]["lng"] : "";
+          location["city"] = row['data']["location"]["city"]
         }
-          
+        const _id = row['data']["code"];
+
+        let tags = [];
+        [...caption.matchAll(re)].forEach(function(_tag){ 
+          //getting both bash and no-hash. Remove the latter. 
+          const t = _tag.toString().split(',')
+          if (t[0].charAt(0) == "#") tags.push(t[0]); 
+        });
+
+        let usertags = [];
+
+        if (row["usertags"] != undefined) {
+          row["usertags"]["in"].forEach(user => {
+            usertags.push(user["user"]["username"] );
+          });
+        }
+
+        const rows = {
+              "id": _id,
+              "post_source_domain": row["source_platform_url"], //get source_platform_url
+              "thread_id": _id,
+              "parent_id": _id,
+              "url": "https://www.instagram.com/p/" + _id,
+              "body" : `"${caption}"`,
+              "author": `"${row['data']["owner"]["username"]}"`,
+              "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:""  ,
+              "is_verified": (row['data']['is_verified']) ? true : false,
+              "timestamp": dt.getFullYear() + "-" + (dt.getMonth()  + 1) + "-" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(), 
+              "author_avatar_url": (row['data']['user']["profile_pic_url"])? row['data']['user']["profile_pic_url"]: "",
+              "coauthors": "", 
+              "coauthors_fullname": "",
+              "coauthors_ids": "",
+
+              "media_type": media_type,
+              "num_media": num_media,
+              "image_urls": (display_url.length > 0) ? `"${display_url.join(";")}"` : "",
+              "media_urls": (media_url.length > 0) ? `"${media_url.join(";")}"` : "",
+
+              "hashtags": (tags.length > 0) ? `"${tags.join(";")}"` : "",
+              "usertags": (usertags.length == 0) ? "" : usertags.join(";"),
+              "likes_hidden": (row["like_and_view_counts_disabled"]) ? true : false,
+              "num_likes": row["data"]["like_count"],
+              "num_comments": num_comments,
+              
+              "location_name": `"${location["name"]}"`,
+              "location_id" : `"${location["id"]}"`,
+              "location_latlong": `"${location["latlong"]}"`,
+              "location_city": (location['city'] === undefined || location['city'] == "") ? "" : `"${location["city"]}"`,
+              
+              "unix_timestamp": row['data']["taken_at"], 
+              "missing_media": ""
+            }
+
+            lines.push(Object.values(rows).join(','))
+            if (header.length == 0) { header = Object.keys(rows);}
+      } catch (error) {
+        console.log("Error parsing Instagram row:", error)
+      }
         } );
 
         const csv = [
@@ -292,133 +313,137 @@ function parseTiktok (header, data) {
   let lines = [];
   flatten(data[0], header)
   data.forEach(function(row) {
-    //challenges = [[challenge["title"] for challenge in post.get("challenges", [])]]
-    challenges = []
-    if (row['data']['challenges'] != null) {
-      row['data']['challenges'].forEach(challenge => challenges.push(challenge.title));
-    }
+    try {
+      //challenges = [[challenge["title"] for challenge in post.get("challenges", [])]]]
+      challenges = []
+      if (row['data']['challenges'] != null) {
+        row['data']['challenges'].forEach(challenge => challenges.push(challenge.title));
+      }
 
-    hashtags = []
-    if (row['data']['contents'] != null) {
-      row['data']['contents'].forEach(function (r) {
-        if (r['textExtra'] != null) {
-          r['textExtra'].forEach(function (tag) {
-            if (tag['hashtagName'] != "") { hashtags.push(tag['hashtagName']) }
-          });
+      hashtags = []
+      if (row['data']['contents'] != null) {
+        row['data']['contents'].forEach(function (r) {
+          if (r['textExtra'] != null) {
+            r['textExtra'].forEach(function (tag) {
+              if (tag['hashtagName'] != "") { hashtags.push(tag['hashtagName']) }
+            });
+          }
+        }
+    )}
+  
+      labels = []
+      if ((row['data']["diversificationLabels"] != null && 
+          typeof (row['data']["diversificationLabels"] == 'list'))) {
+            labels = row['data']["diversificationLabels"]
+      }
+
+      user_nickname = ""
+      user_fullname = ""
+      user_id = ""
+
+      
+      if (typeof(row['data']['author']) == Object) {
+        const _u = JSON.parse(row['data']['author'])
+
+        user_nickname = row['data']["author"]["uniqueId"]
+        user_fullname = row['data']["author"]["nickname"]
+        user_id = row['data']["author"]["id"]
+      } else {
+        user_nickname = row['data']["author"]["uniqueId"]
+        user_fullname = row['data']["author"]["nickname"]
+        user_id = ""
+      }
+
+      thumbnail_options = []
+      if (row['data']["video"]!= null) {
+        if (JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"] != " ") {
+        thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"]);
         }
       }
-  )}
-  
-    labels = []
-    if ((row['data']["diversificationLabels"] != null && 
-        typeof (row['data']["diversificationLabels"] == 'list'))) {
-          labels = row['data']["diversificationLabels"]
-    }
 
-    user_nickname = ""
-    user_fullname = ""
-    user_id = ""
-
-    
-    if (typeof(row['data']['author']) == Object) {
-      const _u = JSON.parse(row['data']['author'])
-
-      user_nickname = row['data']["author"]["uniqueId"]
-      user_fullname = row['data']["author"]["nickname"]
-      user_id = row['data']["author"]["id"]
-    } else {
-      user_nickname = row['data']["author"]["uniqueId"]
-      user_fullname = row['data']["author"]["nickname"]
-      user_id = ""
-    }
-
-    thumbnail_options = []
-    if (row['data']["video"]!= null) {
-      if (JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"] != " ") {
-      thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["shareCover"]);
+      if (row['data']["video"] != null) {
+        if (JSON.parse(JSON.stringify(row['data']["video"]))["cover"] != " ") {
+        thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["cover"]);
+        }
       }
-    }
 
-    if (row['data']["video"] != null) {
-      if (JSON.parse(JSON.stringify(row['data']["video"]))["cover"] != " ") {
-      thumbnail_options.push(JSON.parse(JSON.stringify(row['data']["video"]))["cover"]);
+      thumbnail_url = []
+      const now = new Date()/1000;
+      
+      thumbnail_url = []
+      thumbnail_options.forEach(function (thumb)  {
+        if ( parseInt(parse_qs(thumb)['x-expires']) >= now) {
+          if (thumb != " ") { thumbnail_url.push(thumb); }
+        }
+      } 
+      
+      )
+
+      let effects = []
+      if(row['data']["effectStickers"] != null) { 
+        row['data']["effectStickers"].forEach(e => effects.push(escapeHTML(e["name"])));
       }
-    }
 
-    thumbnail_url = []
-    const now = new Date()/1000;
-    
-    thumbnail_url = []
-    thumbnail_options.forEach(function (thumb)  {
-      if ( parseInt(parse_qs(thumb)['x-expires']) >= now) {
-        if (thumb != " ") { thumbnail_url.push(thumb); }
+      let warnings = []
+      if(row['data']["warningInfo"] != null) {
+        row['data']["warningInfo"].forEach(w => warnings.push(escapeHTML(w["text"])));
       }
-    } 
-    
-    )
 
-    let effects = []
-    if(row['data']["effectStickers"] != null) { 
-      row['data']["effectStickers"].forEach(e => effects.push(escapeHTML(e["name"])));
+      let stickers = []
+      if( row['data']["stickersOnItem"] != null) {
+        row['data']["stickersOnItem"].forEach(
+          w => w["stickerText"].forEach(y => stickers.push(escapeHTML(y))));
+      }
+
+      authStats = 0;
+      likes = 0;
+      videos = 0;
+      if ('authorStats' in row['data'] && row['data']["authorStats"] != undefined) {
+        authStats = row['data']["authorStats"]["followerCount"];
+        likes = row['data']["authorStats"]["diggCount"];
+        videos = row['data']["authorStats"]["videoCount"]
+      }
+
+      const rows = {
+        "id": row['data']["id"],
+        "thread_id": row['data']["id"],
+        "author": `"${user_nickname}"`,
+        "author_full": `"${user_fullname}"`,
+        "author_followers": authStats,
+        "author_likes": likes,
+        "author_videos": videos,
+        "author_avatar": row['data']['author']["avatarThumb"],
+        "body": `"${escapeHTML(row['data']["desc"])}"`,
+        "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
+        "unix_timestamp": row['data']["createTime"],
+        "is_duet":  (row['data']["duetInfo"] && row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
+        "is_ad": (row['data']["isAd"] == "yes")? "yes" : "no",
+        "music_name": `"${row['data']["music"]["title"]}"`,
+        "music_id": row['data']["music"]["id"],
+        "music_url": (row['data']["music"]["playUrl"] != null) ? row['data']["music"]["playUrl"] : "",
+        "music_thumbnail": (row['data']["music"]["coverLarge"] != null) ? row['data']["music"]["coverLarge"] : "",
+        "music_author": (row['data']["music"]["authorName"] != null) ? `"${row['data']["music"]["authorName"]}"` : "",
+        "video_url": (row['data']["video"]["downloadAddr"] != null) ? row['data']["video"]["downloadAddr"] : "",
+        "tiktok_url": "https://www.tiktok.com/" + user_nickname + "/video/" + row['data']['id'],
+        "thumbnail_url": `"${thumbnail_url}"`,
+        "likes": row['data']["stats"]["diggCount"],
+        "comments": row['data']["stats"]["commentCount"],
+        "shares": row['data']["stats"]["shareCount"],
+        "plays": row['data']["stats"]["playCount"],
+        "hashtags": `"${escapeHTML(hashtags.join(','))}"`,
+        "challenges": `"${escapeHTML(challenges.join(','))}"`,
+        "diversification_labels": `"${labels}"`,
+        "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
+        "stickers": `"${escapeHTML(stickers.join(','))}"`,
+        "effects": `"${effects.join(',')}"`,
+        "warning": `"${warnings.join(',')}"`,
+        "verified": row['data']['author']['verified']
     }
-
-    let warnings = []
-    if(row['data']["warning Info"] != null) {
-      row['data']["warningInfo"].forEach(w => warnings.push(escapeHTML(w["text"])));
+      lines.push(Object.values(rows).join(','))
+      if (header.length == 0) { header = Object.keys(rows);}
+    } catch(e) {
+      console.error("Error parsing TikTok row:", e);
     }
-
-    let stickers = []
-    if( row['data']["stickersOnItem"] != null) {
-      row['data']["stickersOnItem"].forEach(
-        w => w["stickerText"].forEach(y => stickers.push(escapeHTML(y))));
-    }
-
-    authStats = 0;
-    likes = 0;
-    videos = 0;
-    if ('authorStats' in row['data'] && row['data']["authorStats"] != undefined) {
-      authStats = row['data']["authorStats"]["followerCount"];
-      likes = row['data']["authorStats"]["diggCount"];
-      videos = row['data']["authorStats"]["videoCount"]
-    }
-
-    const rows = {
-      "id": row['data']["id"],
-      "thread_id": row['data']["id"],
-      "author": `"${user_nickname}"`,
-      "author_full": `"${user_fullname}"`,
-      "author_followers": authStats,
-      "author_likes": likes,
-      "author_videos": videos,
-      "author_avatar": row['data']['author']["avatarThumb"],
-      "body": `"${escapeHTML(row['data']["desc"])}"`,
-      "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
-      "unix_timestamp": row['data']["createTime"],
-      "is_duet":  (row['data']["duetInfo"] && row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
-      "is_ad": (row['data']["isAd"] == "yes")? "yes" : "no",
-      "music_name": `"${row['data']["music"]["title"]}"`,
-      "music_id": row['data']["music"]["id"],
-      "music_url": (row['data']["music"]["playUrl"] != null) ? row['data']["music"]["playUrl"] : "",
-      "music_thumbnail": (row['data']["music"]["coverLarge"] != null) ? row['data']["music"]["coverLarge"] : "",
-      "music_author": (row['data']["music"]["authorName"] != null) ? `"${row['data']["music"]["authorName"]}"` : "",
-      "video_url": (row['data']["video"]["downloadAddr"] != null) ? row['data']["video"]["downloadAddr"] : "",
-      "tiktok_url": "https://www.tiktok.com/" + user_nickname + "/video/" + row['data']['id'],
-      "thumbnail_url": `"${thumbnail_url}"`,
-      "likes": row['data']["stats"]["diggCount"],
-      "comments": row['data']["stats"]["commentCount"],
-      "shares": row['data']["stats"]["shareCount"],
-      "plays": row['data']["stats"]["playCount"],
-      "hashtags": `"${escapeHTML(hashtags.join(','))}"`,
-      "challenges": `"${escapeHTML(challenges.join(','))}"`,
-      "diversification_labels": `"${labels}"`,
-      "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
-      "stickers": `"${escapeHTML(stickers.join(','))}"`,
-      "effects": `"${effects.join(',')}"`,
-      "warning": `"${warnings.join(',')}"`,
-      "verified": row['data']['author']['verified']
-  }
-    lines.push(Object.values(rows).join(','))
-    if (header.length == 0) { header = Object.keys(rows);}
   })
 
   const csv = [
@@ -462,10 +487,10 @@ function parseAll (header, result) {
     const _csv = [
                 Object.keys(header).join(','), // header row first
                 ...Object.values(result).map(function(r) { 
-			        const row = {}
-			        flatten(r, row)
-			        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
-		        })
+	 	        const row = {}
+	 	        flatten(r, row)
+	 	        return Object.keys(header).map(fieldName => JSON.stringify(row[fieldName]) ).join(',')
+	         })
             ].join('\r\n')
 
     return _csv;
@@ -483,7 +508,8 @@ function flatten(object, target, path) {
 }
 
 function escapeHTML(str){
-  return str.replaceAll("\n","  ").replace(/(['",])/g, "\$1").replaceAll(',', '‚');
+  if (!str) return "";
+  return str.replaceAll("\n","  ").replace(/(['\",])/g, "\\$1").replaceAll(',', '‚');
 }
 
 function parse_qs (urlArray){ 
@@ -491,16 +517,20 @@ function parse_qs (urlArray){
 
   if (typeof(urlArray) == 'string') {
     let _url = urlArray.split("?")[1];
-    const splitq = _url.split('=')
-    q[splitq[0]] = splitq[1]
+    if (_url) {
+      const splitq = _url.split('=')
+      q[splitq[0]] = splitq[1]
+    }
   } else if (urlArray != undefined) {
     urlArray.forEach(function (url) {
       if (url != "") {
         let _url = url.split("?")[1];
-        _url.split('&').forEach(function(_q) {
-          const splitq = _q.split('=')
-          q[splitq[0]] = splitq[1]
-        });
+        if (_url) {
+          _url.split('&').forEach(function(_q) {
+            const splitq = _q.split('=')
+            q[splitq[0]] = splitq[1]
+          });
+        }
       }
     });
   }
