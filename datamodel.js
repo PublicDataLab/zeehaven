@@ -431,28 +431,6 @@ function parseTiktok (header, data) {
 }
 
 /**
-* Parse LinkedIn to the 4cat model
-*/
-function parseLinkedIn (header, data) {
-
-  let lines = [];
-    flatten(data[0], header)
-    data.forEach(function(row) {
-      const rows = {
-
-      }
-    lines.push(Object.values(rows).join(','))
-      if (header.length == 0) { header = Object.keys(rows);}
-    });
-
-    const csv = [
-      header.join(','), // header row first
-      lines.join('\n')
-    ].join('\n');
-
-    return csv;
-}
-/**
  * Parse all data. We will not look for certain columns. 
  */
 function parseAll (header, result) {
@@ -470,6 +448,8 @@ function parseAll (header, result) {
 
     return _csv;
 }
+
+// helper functions
 
 function flatten(object, target, path) {
   path = path || '';
