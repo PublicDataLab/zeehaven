@@ -321,7 +321,6 @@ function parseTiktok (header, data) {
 
     
     if (typeof(row['data']['author']) == Object) {
-      const _u = JSON.parse(row['data']['author'])
 
       user_nickname = row['data']["author"]["uniqueId"]
       user_fullname = row['data']["author"]["nickname"]
@@ -402,7 +401,7 @@ function parseTiktok (header, data) {
       "music_thumbnail": (row['data']["music"]["coverLarge"] != null) ? row['data']["music"]["coverLarge"] : "",
       "music_author": (row['data']["music"]["authorName"] != null) ? `"${row['data']["music"]["authorName"]}"` : "",
       "video_url": (row['data']["video"]["downloadAddr"] != null) ? row['data']["video"]["downloadAddr"] : "",
-      "tiktok_url": "https://www.tiktok.com/" + user_nickname + "/video/" + row['data']['id'],
+      "tiktok_url": "https://www.tiktok.com/@" + user_nickname + "/video/" + row['data']['id'],
       "thumbnail_url": `"${thumbnail_url}"`,
       "likes": row['data']["stats"]["diggCount"],
       "comments": row['data']["stats"]["commentCount"],
