@@ -168,13 +168,13 @@ function parseInstagram (header, data) {
 
       let media_url = [];
       let display_url = [];
-      let media_types = [];
+      let media_types = new Set();
 
       const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
       let media_type = "unknown";
       try {
       
-        const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
+        const type_map = {1: "photo", 2: "video", 8:"carousel"};
 
         let media_nodes = [];
         if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
@@ -201,11 +201,11 @@ function parseInstagram (header, data) {
           } else {
             missing_media = "";
           }
-
-          media_types.push(type_map[mn['media_type']] );
+          const m = (mn['media_type'] != undefined) ? type_map[mn['media_type']] : "unknown";
+          media_types.add(m);
         }); 
 
-        media_type = (media_types.size > 1) ? "mixed" : media_types.pop();
+        media_type = (media_types.size > 1) ? "mixed" : Array.from(media_types).pop();
 
  
       let location = {"name": "", "latlong": "", "city": ""}
