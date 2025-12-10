@@ -194,40 +194,40 @@ function parseInstagram (header, data) {
         const num_media = (row['data']["media_type"] != MEDIA_TYPE_CAROUSEL)? 1 : row['data']["carousel_media"].length;
         let media_type = "unknown";
         
-          const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
+        const type_map = {MEDIA_TYPE_PHOTO: "photo", MEDIA_TYPE_VIDEO: "video"};
 
-          let media_nodes = [];
-          if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
-            media_nodes = row['data']['carousel_media']
-          } else {
-            media_nodes.push(row)
-          }
+        let media_nodes = [];
+        if (row['data']["media_type"] == MEDIA_TYPE_CAROUSEL) {
+          media_nodes = row['data']['carousel_media']
+        } else {
+          media_nodes.push(row)
+        }
 
-          media_nodes.forEach(mn => {
+        media_nodes.forEach(mn => {
 
-            if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
-              if (mn["video_versions"] && mn["video_versions"][0]) {
-                media_url.push(mn["video_versions"][0]["url"]);
-              }
-
-              if (mn["image_versions2"]) {
-                display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
-              } else if (mn["video_versions"] && mn["video_versions"][0]) {
-                display_url.push(mn["video_versions"][0]["url"])
-              }
-            } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
-              const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
-
-              display_url.push(mediaurl);
-              media_url.push(mediaurl);
-            } else {
-              missing_media = "";
+          if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
+            if (mn["video_versions"] && mn["video_versions"][0]) {
+              media_url.push(mn["video_versions"][0]["url"]);
             }
 
-            media_types.push(type_map[mn['media_type']] );
-          }); 
+            if (mn["image_versions2"]) {
+              display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
+            } else if (mn["video_versions"] && mn["video_versions"][0]) {
+              display_url.push(mn["video_versions"][0]["url"])
+            }
+          } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
+             const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
 
-          media_type = (media_types.length > 1) ? "mixed" : (media_types.length > 0 ? media_types.pop() : "unknown");
+            display_url.push(mediaurl);
+            media_url.push(mediaurl);
+          } else {
+            missing_media = "";
+          }
+
+          media_types.push(type_map[mn['media_type']] );
+        }); 
+
+        media_type = (media_types.length > 1) ? "mixed" : (media_types.length > 0 ? media_types.pop() : "unknown");
 
    
         let location = {"name": "", "latlong": "", "city": ""}
