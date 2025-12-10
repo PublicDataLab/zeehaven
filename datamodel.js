@@ -353,6 +353,8 @@ function parseTiktok (header, data) {
         user_fullname = row['data']["author"]["nickname"]
         user_id = ""
       }
+    
+    if (typeof(row['data']['author']) == Object) {
 
       thumbnail_options = []
       if (row['data']["video"]!= null) {
@@ -444,6 +446,44 @@ function parseTiktok (header, data) {
     } catch(e) {
       console.error("Error parsing TikTok row:", e);
     }
+
+    const rows = {
+      "id": row['data']["id"],
+      "thread_id": row['data']["id"],
+      "author": `"${user_nickname}"`,
+      "author_full": `"${user_fullname}"`,
+      "author_followers": authStats,
+      "author_likes": likes,
+      "author_videos": videos,
+      "author_avatar": row['data']['author']["avatarThumb"],
+      "body": `"${escapeHTML(row['data']["desc"])}"`,
+      "timestamp": new Date(parseInt(row['data']["createTime"] *1000)).toDateString(),
+      "unix_timestamp": row['data']["createTime"],
+      "is_duet":  (row['data']["duetInfo"] && row['data']["duetInfo"]["duetFromId"] != "0") ? "yes" :"no",
+      "is_ad": (row['data']["isAd"] == "yes")? "yes" : "no",
+      "music_name": `"${row['data']["music"]["title"]}"`,
+      "music_id": row['data']["music"]["id"],
+      "music_url": (row['data']["music"]["playUrl"] != null) ? row['data']["music"]["playUrl"] : "",
+      "music_thumbnail": (row['data']["music"]["coverLarge"] != null) ? row['data']["music"]["coverLarge"] : "",
+      "music_author": (row['data']["music"]["authorName"] != null) ? `"${row['data']["music"]["authorName"]}"` : "",
+      "video_url": (row['data']["video"]["downloadAddr"] != null) ? row['data']["video"]["downloadAddr"] : "",
+      "tiktok_url": "https://www.tiktok.com/@" + user_nickname + "/video/" + row['data']['id'],
+      "thumbnail_url": `"${thumbnail_url}"`,
+      "likes": row['data']["stats"]["diggCount"],
+      "comments": row['data']["stats"]["commentCount"],
+      "shares": row['data']["stats"]["shareCount"],
+      "plays": row['data']["stats"]["playCount"],
+      "hashtags": `"${escapeHTML(hashtags.join(','))}"`,
+      "challenges": `"${escapeHTML(challenges.join(','))}"`,
+      "diversification_labels": `"${labels}"`,
+      "location_created": (row['data']["locationCreated"] != null) ? row['data']["locationCreated"] : "",
+      "stickers": `"${escapeHTML(stickers.join(','))}"`,
+      "effects": `"${effects.join(',')}"`,
+      "warning": `"${warnings.join(',')}"`,
+      "verified": row['data']['author']['verified']
+  }
+    lines.push(Object.values(rows).join(','))
+    if (header.length == 0) { header = Object.keys(rows);}
   })
 
   const csv = [
@@ -455,28 +495,6 @@ function parseTiktok (header, data) {
 
 }
 
-/**
-* Parse LinkedIn to the 4cat model
-*/
-function parseLinkedIn (header, data) {
-
-  let lines = [];
-    flatten(data[0], header)
-    data.forEach(function(row) {
-      const rows = {
-
-      }
-    lines.push(Object.values(rows).join(','))
-      if (header.length == 0) { header = Object.keys(rows);}
-    });
-
-    const csv = [
-      header.join(','), // header row first
-      lines.join('\n')
-    ].join('\n');
-
-    return csv;
-}
 /**
  * Parse all data. We will not look for certain columns. 
  */
@@ -495,6 +513,8 @@ function parseAll (header, result) {
 
     return _csv;
 }
+
+// helper functions
 
 function flatten(object, target, path) {
   path = path || '';
