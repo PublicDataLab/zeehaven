@@ -204,28 +204,27 @@ function parseInstagram (header, data) {
         }
 
         media_nodes.forEach(mn => {
+          console.log(mn);
+          console.log(mn["media_type"]);
 
           if (mn["media_type"] == MEDIA_TYPE_VIDEO) {
-            if (mn["video_versions"] && mn["video_versions"][0]) {
-              media_url.push(mn["video_versions"][0]["url"]);
-            }
+            media_url.push(mn["video_versions"][0]["url"]);
 
-            if (mn["image_versions2"]) {
-              display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
-            } else if (mn["video_versions"] && mn["video_versions"][0]) {
+            if ("image_versions2" in mn) {
+             display_url.push(mn["image_versions2"]["candidates"][0]["url"]);
+            } else {
               display_url.push(mn["video_versions"][0]["url"])
             }
-          } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && mn["image_versions2"]) {
-             const mediaurl = (mn["image_versions2"]["candidates"][0]["url"]);
-
+          } else if ((mn["media_type"] == MEDIA_TYPE_PHOTO) && "image_versions2" in mn) {
+            const mediaurl = mn["image_versions2"]["candidates"][0]["url"];
             display_url.push(mediaurl);
             media_url.push(mediaurl);
           } else {
             missing_media = "";
           }
 
-          media_types.push(type_map[mn['media_type']] );
-        }); 
+          media_types.push((type_map[mn['media_type']])? type_map[mn['media_type']]: "unknown" );
+        });
 
         media_type = (media_types.length > 1) ? "mixed" : (media_types.length > 0 ? media_types.pop() : "unknown");
 
@@ -261,7 +260,7 @@ function parseInstagram (header, data) {
               "thread_id": _id,
               "parent_id": _id,
               "url": "https://www.instagram.com/p/" + _id,
-              "body" : `"${caption}"`,
+              "body" : `"${escapeHTML(caption)}"`,
               "author": `"${row['data']["owner"]["username"]}"`,
               "author_fullname": (row["data"]["user"]["full_name"])? `"${row["data"]["user"]["full_name"]}"`:""  ,
               "is_verified": (row['data']['is_verified']) ? true : false,
@@ -493,7 +492,7 @@ function flatten(object, target, path) {
 
 function escapeHTML(str){
   if (!str) return "";
-  return str.replaceAll("\n","  ").replace(/(['\",])/g, "\\$1").replaceAll(',', '‚');
+  return str.replaceAll("\r","  ").replaceAll("\n","  ").replace(/(['\",])/g, "\\$1").replaceAll(',', '‚');
 }
 
 function parse_qs (urlArray){ 
